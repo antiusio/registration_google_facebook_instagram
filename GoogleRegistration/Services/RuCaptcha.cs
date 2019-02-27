@@ -15,7 +15,7 @@ namespace ServiceRegistration.Services
         public static void SolveRecaptcha(string apiKey, Feedback acc, IWebDriver driver, string idTextRecaptcha = "g-recaptcha-response")
         {
             IWebElement webElement = null;
-            webElement = driver.FindElements(By.TagName("iframe"))[1];
+            webElement = driver.FindElements(By.XPath("//body//iframe"))[0];
             string src = "";
             if (webElement != null)
             {

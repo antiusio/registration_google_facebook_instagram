@@ -15,7 +15,7 @@ namespace ServiceRegistration.Services
     public class SmsRegApi
     {
         HttpClient httpClient;
-        string apikey = "49blc4y5jwv7kl5shatnjk6y4t5qj4cb";
+        string apikey = null;
         Feedback acc;
         public SmsRegApi(Feedback acc, string apikey)
         {

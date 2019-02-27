@@ -28,7 +28,7 @@ namespace ServiceRegistration
 
         public RegistrationBrowser(string ip = null, int port = 0,string userAgent= "Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0", TypeBrowserEnum typeBrowser= TypeBrowserEnum.FireFox)
         {
-            if (!(settingsDB is null))
+            if (settingsDB is null)
                 settingsDB = new Settings();
             //CResolution ChangeRes = new CResolution(1280,768);
             //Environment.SetEnvironmentVariable();

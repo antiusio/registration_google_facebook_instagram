@@ -60,7 +60,7 @@ namespace DataBase
                 }
                 if (regBase.settings.Count() == 0)
                 {
-                    regBase.settings.Add(new setting() { rucaptcha_api_key = "1c83a1837d692cc42475a00f6b90f0ca", sms_reg_api_key = "49blc4y5jwv7kl5shatnjk6y4t5qj4cb" });
+                    
 
                 }
                 regBase.SaveChanges();

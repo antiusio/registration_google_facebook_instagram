@@ -99,10 +99,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Files\DataBase\RegBase.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Files\DataBase\RegBase_log.ldf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DependentUpon>RegBase.mdf</DependentUpon>
     </Content>
   </ItemGroup>
