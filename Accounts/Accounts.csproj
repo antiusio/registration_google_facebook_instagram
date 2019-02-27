@@ -67,8 +67,8 @@
     <Compile Include="Data\Sex.cs" />
     <Compile Include="GenerationInfo\Logins.cs" />
     <Compile Include="GenerationInfo\Names.cs" />
+    <Compile Include="InterfaceAccs\FeedBack.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\SmsRegApi.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

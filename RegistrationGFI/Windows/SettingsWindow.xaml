@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RegistrationGFI.Windows"
         mc:Ignorable="d"
-        Title="SettingsWindow" Height="201.717" Width="402.137" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+        Title="SettingsWindow" Height="201.717" Width="402.137" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid>
-        <TextBox HorizontalAlignment="Left" Height="22" Margin="140,38,0,0" TextWrapping="Wrap" Text="{Binding CaptchaApiKey, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
-        <Label Content="Capcha api key" HorizontalAlignment="Left" Margin="37,34,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="140,65,0,0" TextWrapping="Wrap" Text="{Binding SmsRegApiKey, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
-        <Label Content="Sms-reg api key" HorizontalAlignment="Left" Margin="36,61,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="22" Margin="140,38,0,0" TextWrapping="Wrap" Text="{Binding RuCaptchaApiKey, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="169"/>
+        <Label Content="RuCapcha api key" HorizontalAlignment="Left" Margin="37,34,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="140,73,0,0" TextWrapping="Wrap" Text="{Binding SmsRegApiKey, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="169"/>
+        <Label Content="Sms-reg api key" HorizontalAlignment="Left" Margin="36,69,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

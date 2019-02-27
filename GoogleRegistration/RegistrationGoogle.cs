@@ -1,6 +1,6 @@
 ﻿using Accounts;
-using Accounts.Services;
 using OpenQA.Selenium;
+using ServiceRegistration.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;

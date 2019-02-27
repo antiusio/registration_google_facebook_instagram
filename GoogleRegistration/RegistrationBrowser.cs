@@ -1,8 +1,10 @@
 ﻿using Accounts;
 using Accounts.GenerationInfo;
 using DataBase;
+using DataBase.DataStructures;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
+using ServiceRegistration.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +23,13 @@ namespace ServiceRegistration
     }
     public class RegistrationBrowser
     {
+        static Settings settingsDB;
         IWebDriver driver;
 
         public RegistrationBrowser(string ip = null, int port = 0,string userAgent= "Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0", TypeBrowserEnum typeBrowser= TypeBrowserEnum.FireFox)
         {
+            if (!(settingsDB is null))
+                settingsDB = new Settings();
             //CResolution ChangeRes = new CResolution(1280,768);
             //Environment.SetEnvironmentVariable();
             FirefoxProfile firefoxProfile = new FirefoxProfile();
@@ -169,7 +174,7 @@ namespace ServiceRegistration
             //recaptcha
             try
             {
-                rucaptcha("1c83a1837d692cc42475a00f6b90f0ca", acc, driver.Url);
+                rucaptcha(settingsDB.RuCaptchaApiKey, acc, driver.Url);
             }
             catch (Exception ex)
             {
@@ -354,7 +359,7 @@ namespace ServiceRegistration
             //webElement.
             //webElement.SendKeys(result);
         }
-        private bool Check1page()
+        private bool Check1pageIua()
         {
             try
             {
@@ -365,7 +370,7 @@ namespace ServiceRegistration
             catch { return false; }
             return true;
         }
-        private bool Check2page()
+        private bool Check2pageIua()
         {
             try
             {
@@ -374,7 +379,7 @@ namespace ServiceRegistration
             catch { return false; }
             return true;
         }
-        private bool Check3Page()
+        private bool Check3PageIua()
         {
             try
             {
@@ -384,6 +389,283 @@ namespace ServiceRegistration
             {
                 return false;
             }
+            return true;
+        }
+
+        public bool OpenRegistration(AccGoogle acc)
+        {
+            //1-я страница
+            driver.Navigate().GoToUrl("https://www.google.com/gmail/about/new/");
+            IWebElement element = null;
+            if (!Check1Page())
+            {
+                throw new Exception("Error in 1 page before go to page with registration form");
+            }
+            element = driver.FindElement(By.XPath("//a[@href and @class='hero_home__link__desktop']"));
+            string href = element.GetAttribute("href");
+            driver.Navigate().GoToUrl(href);
+
+            //2 страница форма ввода данных
+            if (!Check2Page())
+            {
+                throw new Exception("Error in 2 page (registration form)");
+            }
+            //firstName
+            element = driver.FindElement(By.XPath("//input[@id='firstName']"));
+            element.SendKeys(acc.FirstName);
+            //lastName
+            element = driver.FindElement(By.Id("lastName"));
+            element.SendKeys(acc.LastName);
+            //Username
+            element = driver.FindElement(By.Name("Username"));
+            element.SendKeys(acc.Login);
+            //Passwd
+            element = driver.FindElement(By.Name("Passwd"));
+            element.SendKeys(acc.Password);
+            //ConfirmPasswd
+            element = driver.FindElement(By.Name("ConfirmPasswd"));
+            element.SendKeys(acc.Password);
+            //next click
+            element = driver.FindElement(By.Id("accountDetailsNext"));
+            element.Click();
+            ;
+            //3 страница ввода телефона
+            if (!Check3Page())
+            {
+                throw new Exception("Error in 3 page (input phone)");
+            }
+            SmsRegApi smsRegApi = new SmsRegApi(acc, settingsDB.SmsRegApiKey);
+            //запрос на номер
+            bool f = smsRegApi.GetNum().GetAwaiter().GetResult();
+            if (f)
+            {
+                //ввод номера и нажатие кнопки далее
+                for (; ; )
+                {
+                    Thread.Sleep(1000);
+                    var status = smsRegApi.getState().GetAwaiter().GetResult();
+                    if (status is null)
+                        return false;
+                    if (status.number != null)
+                    {
+                        element = driver.FindElement(By.Id("phoneNumberId"));
+                        element.SendKeys(status.number);
+                        acc.Phone = status.number;
+                        //gradsIdvPhoneNext
+                        element = driver.FindElement(By.Id("gradsIdvPhoneNext"));
+                        element.Click();
+                        ;
+                        smsRegApi.setReady();
+                        break;
+                    }
+                }
+                //ввод ответа из смс
+                if (!Check4Page())
+                {
+                    throw new Exception("Error in 4 page (after input phone)");
+                }
+                for (; ; )
+                {
+                    var status = smsRegApi.getState().GetAwaiter().GetResult();
+                    if (status is null)
+                        return false;
+                    if (status.msg != null)
+                    {
+                        element = driver.FindElement(By.Id("code"));
+                        element.SendKeys(status.msg);
+                        //gradsIdvVerifyNext
+                        element = driver.FindElement(By.Id("gradsIdvVerifyNext"));
+                        element.Click();
+                        ;
+                        smsRegApi.setOperationOk().GetAwaiter().GetResult();
+                        break;
+                    }
+                }
+                ;
+                //та страница, которая содержит поле для ввода альтернативного адреса электронной почты, дата рождения и пол
+                if (!Check5Page())
+                {
+                    throw new Exception("Error in 5 page (alternative email, datebirth and other)");
+                }
+                //email
+                element = driver.FindElements(By.TagName("input"))[1];
+                element.SendKeys(acc.AlternativeEmail);
+                //day
+                element = driver.FindElements(By.TagName("input"))[2];
+                element.SendKeys(acc.DateBirth.Day.ToString());
+                //month
+                element = driver.FindElement(By.XPath("//select[@id='month']/option[@value='" + acc.DateBirth.Month.ToString() + "']"));
+                element.Click();
+                //year
+                element = driver.FindElements(By.TagName("input"))[3];
+                element.SendKeys(acc.DateBirth.Year.ToString());
+                //Sex
+                element = driver.FindElement(By.XPath("//select[@id='gender']/option[@value='" + (int)acc.Sex + "']"));
+                element.Click();
+                //button next
+                element = driver.FindElement(By.Id("personalDetailsNext"));
+                element.Click();
+                //больше возможностей благодаря номеру
+                if (!Check6Page())
+                {
+                    throw new Exception("Error in 6 page (More room features)");
+                }
+                element = driver.FindElements(By.TagName("button"))[2];
+                element.Click();
+                if (!Check7Page())
+                {
+                    throw new Exception("Error in 7 page (Confidentiality and conditions)");
+                }
+                element = driver.FindElement(By.Id("termsofserviceNext"));
+                element.Click();
+                if (!Check8Page())
+                {
+                    throw new Exception("Error in 8 page (End Registration)");
+                }
+                element = driver.FindElement(By.Id("profileIdentifier"));
+                string email = element.Text;
+                if (email.Remove(email.IndexOf('@')).Equals(acc.Login))
+                {
+                    return true;
+                }
+
+            }
+            ////page3 телефонный номер
+            //element = browser.FindElement(By.Id("countryList"));
+            //var elements = element.FindElements(By.XPath("//div[@class and @data-value]"));
+            //element.Click();
+            //foreach (var el in elements)
+            //{
+            //    if (el.GetAttribute("data-value").Equals("ru"))
+            //    {
+            //        el.FindElement(By.TagName("content")).Click();
+            //        break;
+            //    }
+            //}
+
+
+            return true;
+        }
+        /// <summary>
+        /// Check page before registration form page
+        /// </summary>
+        /// <returns>true - all right, false - page not fit</returns>
+        private bool Check1Page()
+        {
+            IWebElement element;
+            try
+            {
+                element = driver.FindElement(By.XPath("//a[@href and @class='hero_home__link__desktop']"));
+                if (element == null)
+                    return false;
+                element.GetAttribute("href");
+            }
+            catch { return false; }
+            return true;
+        }
+        /// <summary>
+        /// Check registration form page
+        /// </summary>
+        /// <returns>true - all right, false - page not fit</returns>
+        private bool Check2Page()
+        {
+            IWebElement element;
+            try
+            {
+                //firstName
+                element = driver.FindElement(By.XPath("//input[@id='firstName']"));
+                //lastName
+                element = driver.FindElement(By.Id("lastName"));
+                //Username
+                element = driver.FindElement(By.Name("Username"));
+                //Passwd
+                element = driver.FindElement(By.Name("Passwd"));
+                //ConfirmPasswd
+                element = driver.FindElement(By.Name("ConfirmPasswd"));
+                //next click
+                element = driver.FindElement(By.Id("accountDetailsNext"));
+            }
+            catch { return false; }
+            return true;
+        }
+        /// <summary>
+        /// Check input phone page
+        /// </summary>
+        /// <returns></returns>
+        private bool Check3Page()
+        {
+            IWebElement element;
+            try
+            {
+                element = driver.FindElement(By.Id("phoneNumberId"));
+                element = driver.FindElement(By.Id("gradsIdvPhoneNext"));
+            }
+            catch { return false; }
+            return true;
+        }
+        /// <summary>
+        /// Check input sms page
+        /// </summary>
+        /// <returns></returns>
+        private bool Check4Page()
+        {
+            IWebElement element;
+            try
+            {
+                element = driver.FindElement(By.Id("code"));
+                element = driver.FindElement(By.Id("gradsIdvVerifyNext"));
+            }
+            catch { return false; }
+            return true;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private bool Check5Page()
+        {
+            IWebElement element;
+            try
+            {
+                element = driver.FindElements(By.TagName("input"))[1];
+                element = driver.FindElements(By.TagName("input"))[2];
+                element = driver.FindElement(By.XPath("//select[@id='month']/option[@value='" + 10 + "']"));
+                element = driver.FindElements(By.TagName("input"))[3];
+                element = driver.FindElement(By.Id("personalDetailsNext"));
+            }
+            catch { return false; }
+            return true;
+        }
+        private bool Check6Page()
+        {
+            IWebElement element;
+            try
+            {
+                element = driver.FindElements(By.TagName("button"))[2];
+                element = driver.FindElement(By.Id("phoneUsageNext"));
+            }
+            catch { return false; }
+            return true;
+        }
+        private bool Check7Page()
+        {
+            IWebElement element;
+            try
+            {
+                element = driver.FindElement(By.Id("termsofserviceNext"));
+            }
+            catch { return false; }
+            return true;
+        }
+        private bool Check8Page()
+        {
+            IWebElement element;
+            try
+            {
+                element = driver.FindElement(By.Id("password"));
+                element = driver.FindElement(By.Id("profileIdentifier"));
+            }
+            catch { return false; }
             return true;
         }
     }

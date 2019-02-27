@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="city.cs" />
     <Compile Include="country.cs" />
+    <Compile Include="DataStructures\Settings.cs" />
     <Compile Include="google_accs.cs" />
     <Compile Include="i_ua_accs.cs" />
     <Compile Include="i_ua_domen_names.cs" />

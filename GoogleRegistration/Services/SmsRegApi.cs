@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Accounts.InterfaceAccs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Accounts.Services
+namespace ServiceRegistration.Services
 {
-    public interface Feedback
-    {
-        string StatusText { get; set; }
-    }
+    
     public class SmsRegApi
     {
         HttpClient httpClient;
@@ -50,7 +48,7 @@ namespace Accounts.Services
                 string service = "gmail";
                 string appid = "";
                 string response = "";
-                for (int i = 0; i<20; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     try
                     {

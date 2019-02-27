@@ -22,6 +22,7 @@ using Accounts;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using RegistrationGFI.Windows;
 
 namespace RegistrationGFI
 {
@@ -92,7 +93,11 @@ namespace RegistrationGFI
 
         private void SettingsMenuItem_Click(object sender, RoutedEventArgs e)
         {
-
+            SettingsWindow window = new SettingsWindow();
+            window.ResizeMode = ResizeMode.NoResize;
+            window.Owner = this;
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.Show();
         }
     }
 }
