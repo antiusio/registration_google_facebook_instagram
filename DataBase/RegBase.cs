@@ -18,6 +18,7 @@ namespace DataBase
         public virtual DbSet<i_ua_accs> i_ua_accs { get; set; }
         public virtual DbSet<i_ua_domen_names> i_ua_domen_names { get; set; }
         public virtual DbSet<secret_questions> secret_questions { get; set; }
+        public virtual DbSet<setting> settings { get; set; }
         public virtual DbSet<sex> sexes { get; set; }
         public virtual DbSet<user_agents> user_agents { get; set; }
 

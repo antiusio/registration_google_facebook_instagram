@@ -81,6 +81,7 @@
     <Compile Include="RegBase.cs" />
     <Compile Include="Repair.cs" />
     <Compile Include="secret_questions.cs" />
+    <Compile Include="setting.cs" />
     <Compile Include="sex.cs" />
     <Compile Include="user_agents.cs" />
   </ItemGroup>
@@ -95,7 +96,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Files\DataBase\RegBase.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
