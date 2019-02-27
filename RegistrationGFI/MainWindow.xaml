@@ -13,6 +13,9 @@
         <Menu>
             <MenuItem Header="Меню">
                 <MenuItem Header="Регистрация обычных почт" Click="RegisterBufferMenuItem_Click"/>
+                <MenuItem Header="Загрузить юзер агенты" Click="UploadUserAgentsMenuItem_Click"/>
+                <MenuItem Header="Настройки" Click="SettingsMenuItem_Click"/>
+                
             </MenuItem>
             
         </Menu>

@@ -31,8 +31,8 @@ namespace RegistrationGFI
         MyDataContext myDataContext=null;
         public MainWindow()
         {
-            myDataContext = new MyDataContext();
-            DataContext = myDataContext;
+
+            
             InitializeComponent();
             
         }
@@ -79,8 +79,20 @@ namespace RegistrationGFI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
-            
+
+            Repair.RepairDB();
+            myDataContext = new MyDataContext();
+            DataContext = myDataContext;
+        }
+
+        private void UploadUserAgentsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void SettingsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
