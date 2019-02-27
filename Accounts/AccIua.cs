@@ -1,5 +1,6 @@
 ﻿using Accounts.Data;
 using Accounts.GenerationInfo;
+using Accounts.InterfaceAccs;
 using DataBase;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 namespace Accounts
 {
     
-    public class AccIua : INotifyPropertyChanged
+    public class AccIua : INotifyPropertyChanged,Feedback
     {
         public AccIua(Sex sexInput)
         {

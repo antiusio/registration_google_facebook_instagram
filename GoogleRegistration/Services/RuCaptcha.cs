@@ -1,17 +1,21 @@
-﻿using System;
+﻿using Accounts.InterfaceAccs;
+using OpenQA.Selenium;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rucaptcha
+namespace ServiceRegistration.Services
 {
-    public class Recaptcha
+    public static class RuCaptcha
     {
-        public void rucaptcha(string apiKey, Acc accProgram)
+        public static void SolveRecaptcha(string apiKey, Feedback acc, IWebDriver driver, string idTextRecaptcha = "g-recaptcha-response")
         {
             IWebElement webElement = null;
-            webElement = browser.FindElement(By.TagName("iframe"));
+            webElement = driver.FindElements(By.TagName("iframe"))[1];
             string src = "";
             if (webElement != null)
             {
@@ -25,13 +29,13 @@ namespace Rucaptcha
             string respond = "";
             try
             {
-                accProgram.StatusText = "Запрос к сервису капчи ";
-                respond = httpClient.GetStringAsync("http://rucaptcha.com/in.php?key=" + apiKey + "&method=userrecaptcha&googlekey=" + k + "&pageurl=https://account.ncsoft.com/signup/index?serviceCode=13#").GetAwaiter().GetResult();
+                acc.StatusText = "Запрос к сервису капчи ";
+                respond = httpClient.GetStringAsync("http://rucaptcha.com/in.php?key=" + apiKey + "&method=userrecaptcha&googlekey=" + k + "&pageurl=" + driver.Url).GetAwaiter().GetResult();
             }
             catch (Exception ex)
             {
 
-                accProgram.StatusText = "Ошибка при отправке запроса: " + ex.Message;
+                acc.StatusText = "Ошибка при отправке запроса к сервису капчи: " + ex.Message;
                 Thread.Sleep(6000);
                 goto B;
             }
@@ -45,26 +49,27 @@ namespace Rucaptcha
             {
                 Thread.Sleep(6000);
                 respond = httpClient.GetStringAsync("http://rucaptcha.com/res.php?key=" + apiKey + "&action=get&id=" + idCaptcha).GetAwaiter().GetResult();
-                if (respond.IndexOf("CAPCHA_NOT_READY") == -1)
-                {
-                    break;
-                }
+
                 if (respond.IndexOf("ERROR_WRONG_CAPTCHA_ID") != -1)
                 {
-                    accProgram.StatusText = respond;
+                    acc.StatusText = respond;
                     throw new Exception("ERROR_WRONG_CAPTCHA_ID");
                 }
                 if (respond.Equals("ERROR_CAPTCHA_UNSOLVABLE"))
                 {
-                    accProgram.StatusText = respond;
+                    acc.StatusText = respond;
                     throw new Exception("ERROR_CAPTCHA_UNSOLVABLE");
+                }
+                if (respond.IndexOf("CAPCHA_NOT_READY") == -1)
+                {
+                    break;
                 }
 
             }
 
             string result = respond.Split(new char[] { '|' })[1];
-            webElement = browser.FindElement(By.Id("g-recaptcha-response"));
-            ((IJavaScriptExecutor)browser).ExecuteScript("document.getElementById('g-recaptcha-response').value='" + result + "';", webElement);
+            webElement = driver.FindElement(By.Id(idTextRecaptcha));
+            ((IJavaScriptExecutor)driver).ExecuteScript("document.getElementById('" + idTextRecaptcha + "').value='" + result + "';", webElement);
             ;
             //webElement.
             //webElement.SendKeys(result);

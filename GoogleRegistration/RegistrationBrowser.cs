@@ -125,6 +125,19 @@ namespace ServiceRegistration
             driver = new FirefoxDriver(fireFoxOptions);
             //driver.Navigate().GoToUrl("https://whoer.net/");
         }
+        public Task<List<AccIua>> RegistrationContainer(List<AccIua> listAccs)
+        {
+            return Task<List<AccIua>>.Run(() =>
+            {
+                foreach (var acc in listAccs)
+                {
+                    //OpenBrowser();
+                    bool rezReg = OpenRegistration(acc);
+                    ;
+                }
+                return listAccs;
+            });
+        }
         public bool OpenRegistration(AccIua acc)
         {
             acc.StatusText = "Открытие страницы";
@@ -174,7 +187,7 @@ namespace ServiceRegistration
             //recaptcha
             try
             {
-                rucaptcha(settingsDB.RuCaptchaApiKey, acc, driver.Url);
+                RuCaptcha.SolveRecaptcha(settingsDB.RuCaptchaApiKey,acc,driver);
             }
             catch (Exception ex)
             {
@@ -297,67 +310,6 @@ namespace ServiceRegistration
                 acc.StatusText = "Зарегистрировано";
             }
             return true;
-        }
-        public void rucaptcha(string apiKey, AccIua accProgram, string url)
-        {
-            IWebElement webElement = null;
-            webElement = driver.FindElement(By.XPath("//div[@class='g-recaptcha' and @data-sitekey]//iframe"));
-            string src = "";
-            if (webElement != null)
-            {
-                src = webElement.GetAttribute("src");
-            }
-            string k = src.Remove(0, src.IndexOf("k=") + 2);
-            k = k.Remove(k.IndexOf("&"));
-            //http://rucaptcha.com/in.php?key=1abc234de56fab7c89012d34e56fa7b8&method=userrecaptcha&googlekey=6Le-wvkSVVABCPBMRTvw0Q4Muexq1bi0DJwx_mJ-&pageurl=http://mysite.com/page/with/recaptcha?appear=1&here=now
-            HttpClient httpClient = new HttpClient();
-            B:
-            string respond = "";
-            try
-            {
-                accProgram.StatusText = "Запрос к сервису капчи ";
-                respond = httpClient.GetStringAsync("http://rucaptcha.com/in.php?key=" + apiKey + "&method=userrecaptcha&googlekey=" + k + "&pageurl=" + url).GetAwaiter().GetResult();
-            }
-            catch (Exception ex)
-            {
-
-                accProgram.StatusText = "Ошибка при отправке запроса: " + ex.Message;
-                Thread.Sleep(6000);
-                goto B;
-            }
-            string idCaptcha = "";
-            if (respond.IndexOf("OK") != -1)
-            {
-                idCaptcha = respond.Remove(0, respond.IndexOf('|') + 1);
-            }
-
-            for (; ; )
-            {
-                Thread.Sleep(6000);
-                respond = httpClient.GetStringAsync("http://rucaptcha.com/res.php?key=" + apiKey + "&action=get&id=" + idCaptcha).GetAwaiter().GetResult();
-
-                if (respond.IndexOf("ERROR_WRONG_CAPTCHA_ID") != -1)
-                {
-                    accProgram.StatusText = respond;
-                    throw new Exception("ERROR_WRONG_CAPTCHA_ID");
-                }
-                if (respond.Equals("ERROR_CAPTCHA_UNSOLVABLE"))
-                {
-                    accProgram.StatusText = respond;
-                    throw new Exception("ERROR_CAPTCHA_UNSOLVABLE");
-                }
-                if (respond.IndexOf("CAPCHA_NOT_READY") == -1)
-                {
-                    break;
-                }
-            }
-
-            string result = respond.Split(new char[] { '|' })[1];
-            //browser.SwitchTo().Frame(webElement);
-            webElement = driver.FindElement(By.Id("g-recaptcha-response"));
-            ((IJavaScriptExecutor)driver).ExecuteScript("document.getElementById('g-recaptcha-response').value='" + result + "';", webElement);
-            //webElement.
-            //webElement.SendKeys(result);
         }
         private bool Check1pageIua()
         {
