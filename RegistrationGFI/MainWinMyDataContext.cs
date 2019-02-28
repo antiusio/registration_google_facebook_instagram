@@ -15,16 +15,29 @@ namespace RegistrationGFI
         public MainWinMyDataContext()
         {
             EmailsIua = new List<AccIua>();
+            
             for (int i = 0; i < 2; i++)
             {
                 EmailsIua.Add(new AccIua(Accounts.Data.Sex.Male));
             }
             EmailsIuaReg = new List<AccIua>();
+            EmailsGoogle = new List<AccGoogle>();
             using (RegBase regBase = new RegBase())
             {
                 foreach (var acc in regBase.i_ua_accs)
                     EmailsIuaReg.Add(new AccIua(acc));
+                foreach (var acc in regBase.google_accs)
+                    EmailsGoogleReg.Add(new AccGoogle(acc));
+                foreach(var acc in EmailsIuaReg)
+                {
+                    int CountOverlap=EmailsGoogleReg.Where(x => x.AlternativeEmail.Equals(acc.Email)).Count();
+                    if (CountOverlap == 0)
+                    {
+                        EmailsGoogle.Add(new AccGoogle(acc));
+                    }
+                }
             }
+            
         }
         private List<AccIua> emailsIua;
         public List<AccIua> EmailsIua
@@ -38,10 +51,23 @@ namespace RegistrationGFI
             get { return emailsIuaReg; }
             set { emailsIuaReg = value; OnPropertyChanged("EmailsIuaReg"); }
         }
+        private List<AccGoogle> emailsGoogle;
+        public List<AccGoogle> EmailsGoogle
+        {
+            get { return emailsGoogle; }
+            set { emailsGoogle = value; OnPropertyChanged("EmailsGoogle"); }
+        }
+        private List<AccGoogle> emailsGoogleReg;
+        public List<AccGoogle> EmailsGoogleReg
+        {
+            get { return emailsGoogleReg; }
+            set { emailsGoogleReg = value; OnPropertyChanged("EmailsGoogleReg"); }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
+        
     }
 }

@@ -40,7 +40,7 @@ namespace RegistrationGFI
 
         private void RegisterBufferMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            RegistrationBrowser r = new RegistrationBrowser();
+            RegistrationIua r = new RegistrationIua();
             r.RegistrationContainer(myDataContext.EmailsIua);
         }
         public class MyDataContext : INotifyPropertyChanged

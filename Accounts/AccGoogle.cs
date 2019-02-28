@@ -1,6 +1,7 @@
 ﻿using Accounts.Data;
 using Accounts.GenerationInfo;
 using Accounts.InterfaceAccs;
+using DataBase;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,10 +15,33 @@ namespace Accounts
 {
     public class AccGoogle : INotifyPropertyChanged, Feedback
     {
+        public AccGoogle(AccIua accIua)
+        {
+            firstName = accIua.FirstName;
+            lastName = accIua.LastName;
+            login = accIua.Login;
+            domen = "google.com";
+            password = accIua.Password;
+            sexString = accIua.Sex.ToString();// MyData.Sex[(int)sexInput];
+            
+            dateBirth = accIua.DateBirth;
+            alternativeEmail = accIua.Email;
+        }
+        public AccGoogle(google_accs acc)
+        {
+            firstName = acc.first_name;
+            lastName = acc.last_name;
+            login = acc.login;
+            domen = "google.com";
+            password = acc.password;
+            sexString = MyData.Sex[(int)acc.sex_id];
+            dateBirth = acc.date_birth;
+            alternativeEmail = acc.alt_email;
+        }
         public AccGoogle(Sex sexInput, string alternativeEmail)
         {
             Names n = new Names();
-
+            
             Names.Info info = null;
             info = n.GetFirstLastNameInfo(sexInput);
             if (info != null)
@@ -114,6 +138,12 @@ namespace Accounts
         {
             get { return alternativeEmail; }
             set { alternativeEmail = value; OnPropertyChanged("AlternativeEmail"); }
+        }
+        private int alternativeEmailId;
+        public int AlternativeEmailId
+        {
+            get { return alternativeEmailId; }
+            set { alternativeEmailId = value; OnPropertyChanged("AlternativeEmailId"); }
         }
         private DateTime dateRegistered;
         public DateTime DateRegisterd

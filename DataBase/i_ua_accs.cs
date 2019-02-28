@@ -8,12 +8,6 @@ namespace DataBase
 
     public partial class i_ua_accs
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public i_ua_accs()
-        {
-            google_accs = new HashSet<google_accs>();
-        }
-
         public int id { get; set; }
 
         [StringLength(50)]
@@ -48,9 +42,6 @@ namespace DataBase
         public virtual city city { get; set; }
 
         public virtual country country { get; set; }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<google_accs> google_accs { get; set; }
 
         public virtual i_ua_domen_names i_ua_domen_names { get; set; }
 

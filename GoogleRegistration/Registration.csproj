@@ -65,9 +65,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpenBrowser.cs" />
     <Compile Include="RegistrationBrowser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistrationGoogle.cs" />
+    <Compile Include="RegistrationIua.cs" />
     <Compile Include="Services\RuCaptcha.cs" />
     <Compile Include="Services\SmsRegApi.cs" />
   </ItemGroup>

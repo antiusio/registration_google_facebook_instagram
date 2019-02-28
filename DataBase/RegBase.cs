@@ -34,11 +34,6 @@ namespace DataBase
                 .WithOptional(e => e.country)
                 .HasForeignKey(e => e.country_id);
 
-            modelBuilder.Entity<i_ua_accs>()
-                .HasMany(e => e.google_accs)
-                .WithOptional(e => e.i_ua_accs)
-                .HasForeignKey(e => e.alt_email_id);
-
             modelBuilder.Entity<i_ua_domen_names>()
                 .HasMany(e => e.i_ua_accs)
                 .WithOptional(e => e.i_ua_domen_names)

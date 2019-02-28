@@ -13,7 +13,8 @@ namespace DataBase
         [StringLength(50)]
         public string login { get; set; }
 
-        public int? alt_email_id { get; set; }
+        [StringLength(50)]
+        public string alt_email { get; set; }
 
         [StringLength(50)]
         public string password { get; set; }
@@ -32,8 +33,6 @@ namespace DataBase
         public string phone { get; set; }
 
         public DateTime? date_registered { get; set; }
-
-        public virtual i_ua_accs i_ua_accs { get; set; }
 
         public virtual sex sex { get; set; }
     }
