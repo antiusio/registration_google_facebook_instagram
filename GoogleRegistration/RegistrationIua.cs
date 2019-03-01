@@ -15,6 +15,7 @@ namespace ServiceRegistration
 {
     public class RegistrationIua:RegistrationBrowser
     {
+        
         public Task<List<AccIua>> RegistrationContainer(List<AccIua> listAccs)
         {
             return Task<List<AccIua>>.Run(() =>
@@ -32,8 +33,8 @@ namespace ServiceRegistration
         private By Login = By.XPath("//tr[@id='main_reg_login']//div[@class='necessary']/input[@maxlength='20' and @style='']");
         private By Domen = By.Name("domn");
         private By Password = By.XPath("//input[@type='password' and @style='']");
-        private By Error = By.XPath("//tr[@id='main_reg_login']//p[@id and @class='error']");
-        private By Message = By.XPath("//tr[@id='main_reg_login']//p[@id and class='message']");
+        private By Error = By.XPath("//tr[@id='main_reg_login']//p[@id and @class='error' and @style='display: block;']");
+        private By Message = By.XPath("//tr[@id='main_reg_login']//p[@id and @class='message' and @style='display: block;']");
         private By SubmitButton = By.XPath("//input[@type='submit']");
         private By FirstName = By.Name("fname");
         private By LastName = By.Name("lname");
@@ -48,6 +49,7 @@ namespace ServiceRegistration
         private By SecretQuestion = By.Name("quest");
         private By Answer = By.Name("answer");
         private By SubmitButton2 = By.XPath("//input[@type='submit']");
+        private By ErrorRegMsg = By.CssSelector("div[class='content clear']");
 
         private void goToRegisterPage()
         {
@@ -99,8 +101,9 @@ namespace ServiceRegistration
                 try
                 {
                     driver.FindElement(Error);
+                    return false;
                 }
-                catch { return false; }
+                catch {  }
                 Thread.Sleep(1000);
             }
         }
@@ -121,10 +124,10 @@ namespace ServiceRegistration
         {
             var element = driver.FindElement(select);
             var elements = element.FindElements(Options);
-            element = elements.Where(x => x.Text.Equals(textOption)).First();
+            element = elements.Where(x => x.Text.Trim().Equals(textOption)).First();
             element.Click();
         }
-        private void setSex(Sex sex)
+        private void setSex(SexIua sex)
         {
             choseOption(sex.ToString(), Sex);
         }
@@ -132,9 +135,24 @@ namespace ServiceRegistration
         {
             choseOption(day.ToString(), Day);
         }
+        private Dictionary<int, string> Months = new Dictionary<int, string>
+        {
+            { 1, "января" },
+            { 2, "февраля" },
+            { 3, "марта" },
+            { 4, "апреля" },
+            { 5, "мая" },
+            { 6, "июня" },
+            { 7, "июля" },
+            { 8, "августа" },
+            { 9, "сентября" },
+            { 10, "октября" },
+            { 11, "ноября" },
+            { 12, "декабря" },
+        };
         private void setMonth(int month)
         {
-            choseOption(month.ToString(), Month);
+            choseOption(Months[month], Month);
         }
         private void setYear(int year)
         {
@@ -168,7 +186,6 @@ namespace ServiceRegistration
             var element = driver.FindElement(SubmitButton2);
             element.Click();
         }
-
         public bool OpenRegistration(AccIua acc)
         {
             acc.StatusText = "Открытие страницы";
@@ -201,6 +218,7 @@ namespace ServiceRegistration
             //тут проверить перешло ли на следующую страницу
             if (!Check2pageIua())
             {
+                string errorStr = GetErrorStr1();
                 goto Start;
             }
             //firstName
@@ -271,7 +289,7 @@ namespace ServiceRegistration
         {
             try
             {
-                driver.FindElement(By.Name("fname"));
+                driver.FindElement(FirstName);
             }
             catch { return false; }
             return true;
@@ -287,6 +305,16 @@ namespace ServiceRegistration
                 return false;
             }
             return true;
+        }
+        private string GetErrorStr1()
+        {
+            try
+            {
+                var element = driver.FindElement(ErrorRegMsg);
+                return element.Text;
+            }
+            catch { }
+            return null;
         }
     }
 }

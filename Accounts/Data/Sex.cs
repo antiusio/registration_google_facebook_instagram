@@ -11,4 +11,19 @@ namespace Accounts.Data
         Male = 2,
         Female = 1
     }
+    public enum SexIua
+    {
+        мужcкой = 1,
+        женcкий = 2
+    }
+    public static class SexConverter
+    {
+        public static Sex ConvertToSexIua(SexIua sex)
+        {
+            if (sex == SexIua.мужcкой)
+                return Sex.Male;
+            else
+                return Sex.Female;
+        }
+    }
 }

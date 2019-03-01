@@ -28,6 +28,11 @@ namespace Accounts.GenerationInfo
             httpClient = new HttpClient();
             httpClient.BaseAddress = new Uri(host);
         }
+        
+        public Info GetFirstLastNameInfo(SexIua sex, string type = "namefamily")
+        {
+            return GetFirstLastNameInfo(SexConverter.ConvertToSexIua(sex), type);
+        }
         public Info GetFirstLastNameInfo(Sex sex=Sex.Female,/* string gender = "woman"man,*/ string type = "namefamily")
         {
             string gender = "";

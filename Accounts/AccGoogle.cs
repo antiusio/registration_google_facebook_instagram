@@ -23,8 +23,8 @@ namespace Accounts
             login = accIua.Login;
             domen = "google.com";
             password = accIua.Password;
-            sex = accIua.Sex;
-            sexString = accIua.Sex.ToString();// MyData.Sex[(int)sexInput];
+            sex = SexConverter.ConvertToSexIua(accIua.Sex);
+            sexString = accIua.Sex.ToString();
             email = login + "@" + domen;
             dateBirth = accIua.DateBirth;
             alterEmail = accIua.Email;

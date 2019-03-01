@@ -21,7 +21,7 @@ namespace RegistrationGFI
 
             for (int i = 0; i < 2; i++)
             {
-                EmailsIua.Add(new AccIua(Accounts.Data.Sex.Male));
+                EmailsIua.Add(new AccIua(Accounts.Data.SexIua.мужcкой));
             }
             EmailsIuaReg = new List<AccIua>();
             EmailsGoogle = new List<AccGoogle>();

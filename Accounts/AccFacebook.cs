@@ -72,7 +72,7 @@ namespace Accounts
             lastName = accIua.LastName;
             password = accIua.Password;
             dateBirth = accIua.DateBirth;
-            sex = accIua.Sex;
+            sex = SexConverter.ConvertToSexIua(accIua.Sex);
         }
     }
 }
