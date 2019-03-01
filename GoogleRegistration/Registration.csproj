@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="RegistrationBrowser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegistrationFacebook.cs" />
     <Compile Include="RegistrationGoogle.cs" />
     <Compile Include="RegistrationIua.cs" />
     <Compile Include="Services\RuCaptcha.cs" />

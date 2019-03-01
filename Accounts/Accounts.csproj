@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccFacebook.cs" />
     <Compile Include="AccGoogle.cs" />
     <Compile Include="AccIua.cs" />
     <Compile Include="Data\MyData.cs" />
