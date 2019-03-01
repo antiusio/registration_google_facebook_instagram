@@ -16,6 +16,9 @@ namespace RegistrationGFI
         {
             EmailsIua = new List<AccIua>();
             EmailsGoogleReg = new List<AccGoogle>();
+            AccsFacebook = new List<AccFacebook>();
+            AccsFacebookReg = new List<AccFacebook>();
+
             for (int i = 0; i < 2; i++)
             {
                 EmailsIua.Add(new AccIua(Accounts.Data.Sex.Male));
@@ -40,6 +43,15 @@ namespace RegistrationGFI
                     if (CountOverlap == 0)
                     {
                         EmailsGoogle.Add(new AccGoogle(acc));
+                    }
+                    try
+                    {
+                        CountOverlap = AccsFacebookReg.Where(x => x.Email.Equals(acc.Email)).Count();
+                    }
+                    catch { CountOverlap = 0; }
+                    if (CountOverlap == 0)
+                    {
+                        AccsFacebook.Add(new AccFacebook(acc));
                     }
                 }
             }
@@ -68,6 +80,18 @@ namespace RegistrationGFI
         {
             get { return emailsGoogleReg; }
             set { emailsGoogleReg = value; OnPropertyChanged("EmailsGoogleReg"); }
+        }
+        private List<AccFacebook> accsFacebook;
+        public List<AccFacebook> AccsFacebook
+        {
+            get { return accsFacebook; }
+            set { accsFacebook = value; OnPropertyChanged("AccsFacebook"); }
+        }
+        private List<AccFacebook> accsFacebookReg;
+        public List<AccFacebook> AccsFacebookReg
+        {
+            get { return accsFacebookReg; }
+            set { accsFacebookReg = value; OnPropertyChanged("AccsFacebookReg"); }
         }
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = "")

@@ -1,9 +1,11 @@
-﻿using Accounts.Data;
+﻿using Accounts;
+using Accounts.Data;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ServiceRegistration
@@ -22,6 +24,8 @@ namespace ServiceRegistration
         private By Female = By.Id("u_0_9");
         private By Male = By.Id("u_0_a");
         private By SumbitButton = By.Name("websubmit");
+        private By ReenterEmail = By.Name("reg_email_confirmation__");
+        private By Code = By.Id("code_in_cliff");
 
         private void setText(string text,By where)
         {
@@ -40,6 +44,10 @@ namespace ServiceRegistration
         {
             setText(email, Email);
         }
+        public void setReenterEmail(string email)
+        {
+            setText(email,ReenterEmail);
+        }
         public void setPassword(string password)
         {
             setText(password, Password);
@@ -48,7 +56,9 @@ namespace ServiceRegistration
         {
             //select
             var element = driver.FindElement(where);
-            element.FindElement(By.XPath("/option[@value='" + valueOption + "']"));
+            element.Click();
+            Thread.Sleep(1000);
+            element = element.FindElement(By.XPath("//option[@value='" + valueOption + "']"));
             return element;
         }
         private void selectOption(int valueOption, By where)
@@ -82,10 +92,51 @@ namespace ServiceRegistration
                 }
             }
         }
-        public void SumbitForm()
+        public void sumbitForm()
         {
             var element = driver.FindElement(SumbitButton);
             element.Click();
+        }
+        public void goToStartPage()
+        {
+            driver.Navigate().GoToUrl("https://www.facebook.com/");
+        }
+        public void setCode(string code)
+        {
+            setText(code, Code);
+        }
+        public bool OpenRegistration(AccFacebook acc)
+        {
+            goToStartPage();
+            setFirstName(acc.FirstName);
+            setLastName(acc.LastName);
+            setEmail(acc.Email);
+            setReenterEmail(acc.Email);
+
+            setPassword(acc.Password);
+            setDay(acc.DateBirth.Day);
+            setMonth(acc.DateBirth.Month);
+            setYear(acc.DateBirth.Year);
+            setSex(acc.Sex);
+
+            sumbitForm();
+            string code="";
+            //Code = EmailCodeGet
+            setCode(code);
+            return true;
+        }
+        public Task<List<AccFacebook>> RegistrationContainer(List<AccFacebook> listAccs)
+        {
+            return Task<List<AccFacebook>>.Run(() =>
+            {
+                foreach (var acc in listAccs)
+                {
+                    //OpenBrowser();
+                    bool rezReg = OpenRegistration(acc);
+                    ;
+                }
+                return listAccs;
+            });
         }
     }
 }

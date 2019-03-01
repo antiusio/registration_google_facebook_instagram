@@ -14,6 +14,7 @@
             <MenuItem Header="Меню">
                 <MenuItem Header="Регистрация обычных почт" Click="RegisterBufferMenuItem_Click"/>
                 <MenuItem Header="Регистрация google почт" Click="RegisterGoogleMenuItem_Click"/>
+                <MenuItem Header="Регистрация facebook" Click="RegisterFacebookMenuItem_Click"/>
                 
                 <MenuItem Header="Загрузить юзер агенты" Click="UploadUserAgentsMenuItem_Click"/>
                 
@@ -75,6 +76,28 @@
                             <DataGridTextColumn Header="Id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             <DataGridTextColumn Header="Email" Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             <DataGridTextColumn Header="Alter email" Binding="{Binding AlterEmail, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            <DataGridTextColumn Header="Phone" Binding="{Binding Phone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Аккаунты Facebook">
+                <Grid>
+                    <DataGrid DataContext="{Binding Path=AccsFacebook, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding}" CanUserAddRows="False" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            <DataGridTextColumn Header="Phone" Binding="{Binding Phone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Аккаунты reg Facebook">
+                <Grid>
+                    <DataGrid DataContext="{Binding Path=AccsFacebookReg, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding}" CanUserAddRows="False" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             <DataGridTextColumn Header="Phone" Binding="{Binding Phone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         </DataGrid.Columns>
                     </DataGrid>

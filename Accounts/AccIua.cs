@@ -65,7 +65,10 @@ namespace Accounts
             Answer = acc.answer;
                 
         }
-
+        public void ChangeLogin()
+        {
+            login = Logins.GenerateLogin(firstName, lastName);
+        }
         private string statusText;
         public string StatusText
         {

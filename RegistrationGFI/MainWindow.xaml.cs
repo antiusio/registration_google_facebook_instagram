@@ -70,5 +70,11 @@ namespace RegistrationGFI
             RegistrationGoogle r = new RegistrationGoogle();
             r.RegistrationContainer(myDataContext.EmailsGoogle);
         }
+
+        private void RegisterFacebookMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            RegistrationFacebook r = new RegistrationFacebook();
+            r.RegistrationContainer(myDataContext.AccsFacebook);
+        }
     }
 }

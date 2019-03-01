@@ -1,4 +1,5 @@
 ﻿using Accounts;
+using Accounts.Data;
 using Accounts.GenerationInfo;
 using DataBase;
 using OpenQA.Selenium;
@@ -27,52 +28,122 @@ namespace ServiceRegistration
                 return listAccs;
             });
         }
-        public bool OpenRegistration(AccIua acc)
+        private By RegisterButton = By.XPath("//div[@class='Header clear']/ul/li[@class='right']");
+        private By Login = By.XPath("//tr[@id='main_reg_login']//div[@class='necessary']/input[@maxlength='20' and @style='']");
+        private By Domen = By.Name("domn");
+        private By Password = By.XPath("//input[@type='password' and @style='']");
+        private By Error = By.XPath("//tr[@id='main_reg_login']//p[@id and @class='error']");
+        private By Message = By.XPath("//tr[@id='main_reg_login']//p[@id and class='message']");
+        private By SubmitButton = By.XPath("//input[@type='submit']");
+        private By FirstName = By.Name("fname");
+        private By LastName = By.Name("lname");
+        private By Sex = By.Name("s");
+        private By SexOptions = By.TagName("option");
+        private By Month = By.Name("month");
+        private By Day = By.Name("day");
+        private By Year = By.Name("year");
+
+        private void goToRegisterPage()
         {
-            acc.StatusText = "Открытие страницы";
-            driver.Navigate().GoToUrl("https://www.i.ua/");
-            //browser.Navigate().GoToUrl("https://www.i.ua/");
-            var element = driver.FindElement(By.XPath("//div[@class='Header clear']/ul/li[@class='right']"));
+            var element = driver.FindElement(RegisterButton);
             element.Click();
-            //login
-            element = driver.FindElements(By.XPath("//tr[@id='main_reg_login']//div[@class='necessary']/input[@maxlength='20' and @style='']"))[0];
-            for (int i = 0; i < acc.Login.Length; i++)
+        }
+        private void goToMainPage()
+        {
+            driver.Navigate().GoToUrl("https://www.i.ua/");
+        }
+        private void setText(string text, By where)
+        {
+            var element = driver.FindElement(where);
+            element.SendKeys(text);
+        }
+        private void setLogin(string login)
+        {
+            setText(login, Login);
+        }
+        private void setDomen(string domen)
+        {
+            var element = driver.FindElement(Domen);
+            element.Click();
+            element.FindElement(By.XPath("//option[@value='"+domen+"']"));
+            element.Click();
+        }
+        private void setPasswords(string password)
+        {
+            var elements = driver.FindElements(Password);
+            foreach(var el in elements)
             {
-                element.SendKeys(acc.Login[i].ToString());
-                Thread.Sleep(300);
+                el.SendKeys(password);
             }
-            Thread.Sleep(3000);
-            for (; ; )
+        }
+        /// <summary>
+        /// true = no errors, false = errors exists
+        /// </summary>
+        /// <returns></returns>
+        private bool checkLoginErrors()
+        {
+            for(; ; )
             {
                 try
                 {
-                    var element2 = driver.FindElement(By.XPath("//p[@id and @class='error' and @style='display: block;']"));
-                    string loginText = element2.FindElement(By.TagName("b")).Text;
-                    loginText = loginText.Remove(loginText.IndexOf('@'));
-                    if (!loginText.Equals(acc.Login))
-                    {
-                        Thread.Sleep(600);
-                        continue;
-                    }
-                    acc.Login = Logins.GenerateLogin(acc.FirstName, acc.LastName);
-                    element.Clear();
-                    element.SendKeys(acc.Login);
-                    Thread.Sleep(500);
+                    driver.FindElement(Message);
+                    return true;
                 }
-                catch (Exception ex)
+                catch { }
+                try
                 {
+                    driver.FindElement(Error);
+                }
+                catch { return false; }
+                Thread.Sleep(1000);
+            }
+        }
+        private void clickSubmitButton()
+        {
+            var element = driver.FindElement(SubmitButton);
+            element.Click();
+        }
+        private void setFirstName(string firstName)
+        {
+            setText(firstName, FirstName);
+        }
+        private void setLastName(string lastName)
+        {
+            setText(lastName, LastName);
+        }
+        private void setSex(Sex sex)
+        {
+            var element = driver.FindElement(Sex);
+            element.Click();
+            var elements = element.FindElements(SexOptions);
+            foreach (var el in elements)
+                if (el.Text.Equals(sex))
+                {
+                    el.Click();
                     break;
                 }
+        }
+        private void setMonth(int month)
+        {
+
+        }
+        public bool OpenRegistration(AccIua acc)
+        {
+            acc.StatusText = "Открытие страницы";
+            Start:
+            goToMainPage();
+            goToRegisterPage();
+            setLogin(acc.Login);
+            //checkLoginErrors
+            if (!checkLoginErrors())
+            {
+                acc.ChangeLogin();
+                goto Start;
             }
             //domen
-            element = driver.FindElement(By.XPath("//select[@name='domn']"));
-            element.FindElement(By.XPath("//option[@value='" + acc.Domen + "']")).Click();
+            setDomen(acc.Domen);
             //password
-            var elements = driver.FindElements(By.XPath("//input[@type='password' and @style='']"));
-            foreach (var el in elements)
-            {
-                el.SendKeys(acc.Password);
-            }
+            setPasswords(acc.Password);
             //recaptcha
             try
             {
@@ -80,29 +151,22 @@ namespace ServiceRegistration
             }
             catch (Exception ex)
             {
-
+                goto Start;
             }
             //submit
-            element = driver.FindElement(By.XPath("//input[@type='submit']"));
-            element.Click();
+            clickSubmitButton();
+            Thread.Sleep(1000);
             //тут проверить перешло ли на следующую страницу
-            //firstName
-            element = driver.FindElement(By.Name("fname"));
-            element.SendKeys(acc.FirstName);
-            //LastName
-            element = driver.FindElement(By.Name("lname"));
-            element.SendKeys(acc.LastName);
-            //sex
-            element = driver.FindElement(By.Name("s"));
-            elements = element.FindElements(By.TagName("option"));
-            foreach (var el in elements)
+            if (!Check2pageIua())
             {
-                if (el.Text.Equals(acc.Sex))
-                {
-                    el.Click();
-                    break;
-                }
+                goto Start;
             }
+            //firstName
+            setFirstName(acc.FirstName);
+            //LastName
+            setLastName(acc.LastName);
+            //sex
+            setSex(acc.Sex);
             //day
             element = driver.FindElement(By.Name("day"));
             elements = element.FindElements(By.TagName("option"));

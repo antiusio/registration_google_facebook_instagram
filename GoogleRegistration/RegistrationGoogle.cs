@@ -13,7 +13,8 @@ namespace ServiceRegistration
 {
     public partial class RegistrationGoogle: RegistrationBrowser
     {
-        public RegistrationGoogle(string ip = null, int port = 0, string userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.96 Safari/537.36", TypeBrowserEnum typeBrowser = TypeBrowserEnum.Chrome) :base(ip,port,userAgent,typeBrowser)
+        public RegistrationGoogle(string ip = null, int port = 0, string userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.96 Safari/537.36", TypeBrowserEnum typeBrowser = TypeBrowserEnum.Chrome) 
+            :base(ip,port,userAgent,typeBrowser)
         {
 
         }
