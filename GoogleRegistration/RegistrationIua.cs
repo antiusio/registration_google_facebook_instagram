@@ -38,10 +38,12 @@ namespace ServiceRegistration
         private By FirstName = By.Name("fname");
         private By LastName = By.Name("lname");
         private By Sex = By.Name("s");
-        private By SexOptions = By.TagName("option");
+        private By Options = By.TagName("option");
         private By Month = By.Name("month");
         private By Day = By.Name("day");
         private By Year = By.Name("year");
+        private By Country = By.Name("country");
+        private By City = By.Name("city");
 
         private void goToRegisterPage()
         {
@@ -111,21 +113,37 @@ namespace ServiceRegistration
         {
             setText(lastName, LastName);
         }
+        private void choseOption(string textOption, By select)
+        {
+            var element = driver.FindElement(select);
+            var elements = element.FindElements(Options);
+            element = elements.Where(x => x.Text.Equals(textOption)).First();
+            element.Click();
+        }
         private void setSex(Sex sex)
         {
-            var element = driver.FindElement(Sex);
-            element.Click();
-            var elements = element.FindElements(SexOptions);
-            foreach (var el in elements)
-                if (el.Text.Equals(sex))
-                {
-                    el.Click();
-                    break;
-                }
+            choseOption(sex.ToString(), Sex);
+        }
+        private void setDay(int day)
+        {
+            choseOption(day.ToString(), Day);
         }
         private void setMonth(int month)
         {
-
+            choseOption(month.ToString(), Month);
+        }
+        private void setYear(int year)
+        {
+            var element = driver.FindElement(Year);
+            element.SendKeys(year.ToString());
+        }
+        private void setCountry(string country)
+        {
+            choseOption(country, Country);
+        }
+        private void setCity(string city)
+        {
+            choseOption(city, City);
         }
         public bool OpenRegistration(AccIua acc)
         {
@@ -168,41 +186,13 @@ namespace ServiceRegistration
             //sex
             setSex(acc.Sex);
             //day
-            element = driver.FindElement(By.Name("day"));
-            elements = element.FindElements(By.TagName("option"));
-            foreach (var el in elements)
-            {
-                if (el.Text.Equals(acc.DateBirth.Day.ToString()))
-                {
-                    el.Click();
-                    break;
-                }
-            }
+            setDay(acc.DateBirth.Day);
             //month
-            element = driver.FindElement(By.Name("month"));
-            elements = element.FindElements(By.TagName("option"));
-            foreach (var el in elements)
-            {
-                if (el.GetAttribute("value").Equals(acc.DateBirth.Month.ToString()))
-                {
-                    el.Click();
-                    break;
-                }
-            }
+            setMonth(acc.DateBirth.Month);
             //year
-            element = driver.FindElement(By.Name("year"));
-            element.SendKeys(acc.DateBirth.Year.ToString());
+            setYear(acc.DateBirth.Year);
             //country
-            element = driver.FindElement(By.Name("country"));
-            elements = element.FindElements(By.TagName("option"));
-            foreach (var el in elements)
-            {
-                if (el.Text.Equals(acc.Country))
-                {
-                    el.Click();
-                    break;
-                }
-            }
+            setCountry(acc.Country);
             //city
             element = driver.FindElement(By.Name("city"));
             elements = element.FindElements(By.TagName("option"));
