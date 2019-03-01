@@ -61,7 +61,6 @@ namespace DataBase
                 if (regBase.settings.Count() == 0)
                 {
                     
-
                 }
                 regBase.SaveChanges();
             }

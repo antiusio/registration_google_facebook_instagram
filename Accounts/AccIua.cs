@@ -33,7 +33,7 @@ namespace Accounts
             password = System.Web.Security.Membership.GeneratePassword(8, 0);
             Random r = new Random(DateTime.Now.Millisecond);
             password = Regex.Replace(password, @"[^a-zA-Z0-9]", m => r.Next(0,9).ToString());
-            sex = MyData.Sex[(int)sexInput];
+            sex = (Sex) sexInput;
             int year = r.Next(DateTime.Now.Year - 60, DateTime.Now.Year - 20);
             int month = r.Next(1, 12);
             int day = r.Next(1, 28);
@@ -53,7 +53,7 @@ namespace Accounts
                 Domen = regBase.i_ua_domen_names.Where(x=>x.id == acc.i_ua_domen_names.id).First().value;
                 City = regBase.citys.Where(x=>x.id==acc.citys_id).First().value;
                 Country = regBase.countrys.Where(x => x.id == acc.country_id).First().value;
-                Sex = regBase.sexes.Where(x => x.id == acc.sex_id).First().value;
+                Sex = (Sex) acc.sex_id;
                 SecretQuestion = regBase.secret_questions.Where(x => x.id == acc.secret_question_id).First().value;
             
             }
@@ -124,8 +124,8 @@ namespace Accounts
             get { return lastName; }
             set { lastName = value; OnPropertyChanged("LastName"); }
         }
-        private string sex;
-        public string Sex
+        private Sex sex;
+        public Sex Sex
         {
             get { return sex; }
             set { sex = value; OnPropertyChanged("Sex"); }

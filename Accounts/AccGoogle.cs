@@ -17,15 +17,17 @@ namespace Accounts
     {
         public AccGoogle(AccIua accIua)
         {
+            
             firstName = accIua.FirstName;
             lastName = accIua.LastName;
             login = accIua.Login;
             domen = "google.com";
             password = accIua.Password;
+            sex = accIua.Sex;
             sexString = accIua.Sex.ToString();// MyData.Sex[(int)sexInput];
-            
+            email = login + "@" + domen;
             dateBirth = accIua.DateBirth;
-            alternativeEmail = accIua.Email;
+            alterEmail = accIua.Email;
         }
         public AccGoogle(google_accs acc)
         {
@@ -36,7 +38,10 @@ namespace Accounts
             password = acc.password;
             sexString = MyData.Sex[(int)acc.sex_id];
             dateBirth = acc.date_birth;
-            alternativeEmail = acc.alt_email;
+            alterEmail = acc.alt_email;
+            email = login + "@" + domen;
+            id = acc.id;
+            phone = acc.phone;
         }
         public AccGoogle(Sex sexInput, string alternativeEmail)
         {
@@ -61,7 +66,7 @@ namespace Accounts
             int month = r.Next(1, 12);
             int day = r.Next(1, 28);
             dateBirth = new DateTime(year, month, day);
-            this.alternativeEmail = alternativeEmail;
+            this.alterEmail = alternativeEmail;
             //country = MyData.Countrys[1];
             //city = MyData.Citys[1];
             //secretQuestion = MyData.SecretQuestions[4];
@@ -133,11 +138,11 @@ namespace Accounts
             get { return sex; }
             set { sex = value; OnPropertyChanged("Sex"); }
         }
-        private string alternativeEmail;
-        public string AlternativeEmail
+        private string alterEmail;
+        public string AlterEmail
         {
-            get { return alternativeEmail; }
-            set { alternativeEmail = value; OnPropertyChanged("AlternativeEmail"); }
+            get { return alterEmail; }
+            set { alterEmail = value; OnPropertyChanged("AlternativeEmail"); }
         }
         private int alternativeEmailId;
         public int AlternativeEmailId
@@ -150,6 +155,18 @@ namespace Accounts
         {
             get { return dateRegistered; }
             set { dateRegistered = value; OnPropertyChanged("DateRegisterd"); }
+        }
+        private string email;
+        public string Email
+        {
+            get { return email; }
+            set { email = value; OnPropertyChanged("Email"); }
+        }
+        private int id;
+        public int Id
+        {
+            get { return id; }
+            set { id = value; OnPropertyChanged("Id"); }
         }
     }
 }

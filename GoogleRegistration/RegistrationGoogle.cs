@@ -11,8 +11,12 @@ using System.Threading.Tasks;
 
 namespace ServiceRegistration
 {
-    public partial class RegistrationBrowserGoogle: RegistrationBrowser
+    public partial class RegistrationGoogle: RegistrationBrowser
     {
+        public RegistrationGoogle(string ip = null, int port = 0, string userAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.96 Safari/537.36", TypeBrowserEnum typeBrowser = TypeBrowserEnum.Chrome) :base(ip,port,userAgent,typeBrowser)
+        {
+
+        }
         private By FirstName= By.Id("firstName");
         private By LastName = By.Id("lastName");
         private By LinkRegister = By.XPath("//a[@href and @class='hero_home__link__desktop']");
@@ -93,19 +97,42 @@ namespace ServiceRegistration
             var element = driver.FindElements(Day)[2];
             element.SendKeys(day.ToString());
         }
+        public Task<List<AccGoogle>> RegistrationContainer(List<AccGoogle> listAccs)
+        {
+            return Task<List<AccGoogle>>.Run(() =>
+            {
+                foreach (var acc in listAccs)
+                {
+                    //OpenBrowser();
+                    bool rezReg = OpenRegistration(acc);
+                }
+                return listAccs;
+            });
+        }
         public bool OpenRegistration(AccGoogle acc)
         {
-            //1-я страница
-            driver.Navigate().GoToUrl("https://www.google.com/gmail/about/new/");
-            IWebElement element = null;
-            if (!Check1Page())
-            {
-                throw new Exception("Error in 1 page before go to page with registration form");
-            }
-            string href = getHrefRegister();
-            driver.Navigate().GoToUrl(href);
+            //79296911370
+            //using (RegBase regBase = new RegBase())
+            //{
+            //    google_accs googleAcc = new google_accs()
+            //    {
+            //        login = acc.Login,
+            //        alt_email = acc.AlterEmail,
+            //        date_birth = acc.DateBirth,
+            //        date_registered = DateTime.Now,
+            //        first_name = acc.FirstName,
+            //        last_name = acc.LastName,
+            //        password = acc.Password,
+            //        phone = "79296911370",
+            //        sex_id = (int)acc.Sex
+            //    };
+            //    regBase.google_accs.Add(googleAcc);
+            //    regBase.SaveChanges();
+            //}
 
-            //2 страница форма ввода данных
+            //1-я страница
+            driver.Navigate().GoToUrl("https://mail.google.com/mail/signup");
+            IWebElement element = null;
             if (!Check2Page())
             {
                 throw new Exception("Error in 2 page (registration form)");
@@ -118,9 +145,10 @@ namespace ServiceRegistration
             setPassword(acc.Password);
             //ConfirmPasswd
             setConfirmPassword(acc.Password);
+            Thread.Sleep(3000);
             //next click
             clickNext1();
-            ;
+            Thread.Sleep(3000);
             //3 страница ввода телефона
             if (!Check3Page())
             {
@@ -173,7 +201,7 @@ namespace ServiceRegistration
                     throw new Exception("Error in 5 page (alternative email, datebirth and other)");
                 }
                 //email
-                setAlternativeEmeil(acc.AlternativeEmail);
+                setAlternativeEmeil(acc.AlterEmail);
                 //day
                 setDay(acc.DateBirth.Day);
                 //month
@@ -214,7 +242,7 @@ namespace ServiceRegistration
                         google_accs googleAcc = new google_accs()
                         {
                             login = acc.Login,
-                            alt_email = acc.AlternativeEmail,
+                            alt_email = acc.AlterEmail,
                             date_birth = acc.DateBirth,
                             date_registered = DateTime.Now,
                             first_name = acc.FirstName,

@@ -15,7 +15,7 @@ namespace RegistrationGFI
         public MainWinMyDataContext()
         {
             EmailsIua = new List<AccIua>();
-            
+            EmailsGoogleReg = new List<AccGoogle>();
             for (int i = 0; i < 2; i++)
             {
                 EmailsIua.Add(new AccIua(Accounts.Data.Sex.Male));
@@ -28,9 +28,15 @@ namespace RegistrationGFI
                     EmailsIuaReg.Add(new AccIua(acc));
                 foreach (var acc in regBase.google_accs)
                     EmailsGoogleReg.Add(new AccGoogle(acc));
+                    
                 foreach(var acc in EmailsIuaReg)
                 {
-                    int CountOverlap=EmailsGoogleReg.Where(x => x.AlternativeEmail.Equals(acc.Email)).Count();
+                    int CountOverlap = 0;
+                    try
+                    {
+                        CountOverlap = EmailsGoogleReg.Where(x => x.AlterEmail.Equals(acc.Email)).Count();
+                    }
+                    catch { CountOverlap = 0; }
                     if (CountOverlap == 0)
                     {
                         EmailsGoogle.Add(new AccGoogle(acc));

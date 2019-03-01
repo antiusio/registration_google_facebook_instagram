@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ServiceRegistration;
 using FirstLastNames;
-using ServiceRegistration;
 using System.Net.Sockets;
 using System.Net;
 using DataBase;
@@ -29,10 +28,9 @@ namespace RegistrationGFI
     
     public partial class MainWindow : Window
     {
-        MyDataContext myDataContext=null;
+        MainWinMyDataContext myDataContext =null;
         public MainWindow()
         {
-
             
             InitializeComponent();
             
@@ -43,46 +41,13 @@ namespace RegistrationGFI
             RegistrationIua r = new RegistrationIua();
             r.RegistrationContainer(myDataContext.EmailsIua);
         }
-        public class MyDataContext : INotifyPropertyChanged
-        {
-            public MyDataContext()
-            {
-                EmailsIua = new List<AccIua>();
-                for(int i = 0; i < 2; i++)
-                {
-                    EmailsIua.Add(new AccIua(Accounts.Data.Sex.Male));
-                }
-                EmailsIuaReg = new List<AccIua>();
-                using (RegBase regBase = new RegBase())
-                {
-                    foreach (var acc in regBase.i_ua_accs)
-                        EmailsIuaReg.Add(new AccIua(acc));
-                }
-            }
-            private List<AccIua> emailsIua;
-            public List<AccIua> EmailsIua
-            {
-                get { return emailsIua; }
-                set { emailsIua = value; }
-            }
-            private List<AccIua> emailsIuaReg;
-            public List<AccIua> EmailsIuaReg
-            {
-                get { return emailsIuaReg; }
-                set { emailsIuaReg = value; OnPropertyChanged("EmailsIuaReg"); }
-            }
-            public event PropertyChangedEventHandler PropertyChanged;
-            private void OnPropertyChanged([CallerMemberName] string prop = "")
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
-            }
-        }
+        
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
             Repair.RepairDB();
-            myDataContext = new MyDataContext();
+            myDataContext = new MainWinMyDataContext();
             DataContext = myDataContext;
         }
 
@@ -98,6 +63,12 @@ namespace RegistrationGFI
             window.Owner = this;
             window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             window.Show();
+        }
+
+        private void RegisterGoogleMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            RegistrationGoogle r = new RegistrationGoogle();
+            r.RegistrationContainer(myDataContext.EmailsGoogle);
         }
     }
 }

@@ -176,7 +176,7 @@ namespace ServiceRegistration
                 var country_id = regBase.countrys.Where(x => x.value.Equals(acc.Country)).First().id;
                 var domen_id = regBase.i_ua_domen_names.Where(x => x.value.Equals(acc.Domen)).First().id;
                 var secret_question_id = regBase.secret_questions.Where(x => x.value.Equals(acc.SecretQuestion)).First().id;
-                var sex_id = regBase.sexes.Where(x => x.value.Equals(acc.Sex)).First().id;
+                var sex_id = (int)acc.Sex;
                 var accDb = new i_ua_accs()
                 {
                     answer = acc.Answer,

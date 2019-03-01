@@ -133,6 +133,7 @@ namespace ServiceRegistration.Services
                     acc.StatusText = "Ошибка, нету подходящих номеров, операция закончена";
                     return null;
                 }
+                //TZ_INPOOL
 
                 answerState.number = responseJson.number;
                 answerState.msg = responseJson.msg;
