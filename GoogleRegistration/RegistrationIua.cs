@@ -44,6 +44,10 @@ namespace ServiceRegistration
         private By Year = By.Name("year");
         private By Country = By.Name("country");
         private By City = By.Name("city");
+        private By Agree = By.Name("agree");
+        private By SecretQuestion = By.Name("quest");
+        private By Answer = By.Name("answer");
+        private By SubmitButton2 = By.XPath("//input[@type='submit']");
 
         private void goToRegisterPage()
         {
@@ -145,6 +149,26 @@ namespace ServiceRegistration
         {
             choseOption(city, City);
         }
+        private void setAgree()
+        {
+            var element = driver.FindElement(Agree);
+            element.Click();
+        }
+        private void setSecretQuestion(string secretQuestion)
+        {
+            choseOption(secretQuestion,SecretQuestion);
+        }
+        private void setAnswer(string answer)
+        {
+            var element = driver.FindElement(Answer);
+            element.SendKeys(answer);
+        }
+        private void clickSubmitButton2()
+        {
+            var element = driver.FindElement(SubmitButton2);
+            element.Click();
+        }
+
         public bool OpenRegistration(AccIua acc)
         {
             acc.StatusText = "Открытие страницы";
@@ -194,58 +218,36 @@ namespace ServiceRegistration
             //country
             setCountry(acc.Country);
             //city
-            element = driver.FindElement(By.Name("city"));
-            elements = element.FindElements(By.TagName("option"));
-            foreach (var el in elements)
-            {
-                if (el.Text.Equals(acc.City))
-                {
-                    el.Click();
-                    break;
-                }
-            }
+            setCity(acc.City);
             //agree
-            element = driver.FindElement(By.Name("agree"));
-            element.Click();
+            setAgree();
             //quest
-            element = driver.FindElement(By.Name("quest"));
-            elements = element.FindElements(By.TagName("option"));
-            foreach (var el in elements)
-            {
-                if (el.Text.Equals(acc.SecretQuestion))
-                {
-                    el.Click();
-                    break;
-                }
-            }
+            setSecretQuestion(acc.SecretQuestion);
             //answer
-            element = driver.FindElement(By.Name("answer"));
-            element.SendKeys(acc.Answer);
+            setAnswer(acc.Answer);
             //submit
-            element = driver.FindElement(By.XPath("//input[@type='submit']"));
-            element.Click();
+            clickSubmitButton2();
             using (RegBase regBase = new RegBase())
             {
-                var citys_id = regBase.citys.Where(x => x.value.Equals(acc.City)).First().id;
-                var country_id = regBase.countrys.Where(x => x.value.Equals(acc.Country)).First().id;
-                var domen_id = regBase.i_ua_domen_names.Where(x => x.value.Equals(acc.Domen)).First().id;
-                var secret_question_id = regBase.secret_questions.Where(x => x.value.Equals(acc.SecretQuestion)).First().id;
-                var sex_id = (int)acc.Sex;
+                var citysId = regBase.citys.Where(x => x.value.Equals(acc.City)).First().id;
+                var countryId = regBase.countrys.Where(x => x.value.Equals(acc.Country)).First().id;
+                var domenId = regBase.i_ua_domen_names.Where(x => x.value.Equals(acc.Domen)).First().id;
+                var secretQuestion_id = regBase.secret_questions.Where(x => x.value.Equals(acc.SecretQuestion)).First().id;
+                var sexId = (int)acc.Sex;
                 var accDb = new i_ua_accs()
                 {
                     answer = acc.Answer,
-                    citys_id = citys_id,
-                    country_id = country_id,
+                    citys_id = citysId,
+                    country_id = countryId,
                     date_birth = acc.DateBirth,
                     date_registered = DateTime.Now,
-                    domen_id = domen_id,
+                    domen_id = domenId,
                     first_name = acc.FirstName,
                     last_name = acc.LastName,
                     login = acc.Login,
                     password = acc.Password,
-                    secret_question_id = secret_question_id,
-                    sex_id = sex_id,
-
+                    secret_question_id = secretQuestion_id,
+                    sex_id = sexId,
                 };
                 regBase.i_ua_accs.Add(accDb);
                 regBase.SaveChanges();
