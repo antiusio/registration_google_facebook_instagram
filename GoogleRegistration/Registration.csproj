@@ -70,6 +70,7 @@
     <Compile Include="RegistrationFacebook.cs" />
     <Compile Include="RegistrationGoogle.cs" />
     <Compile Include="RegistrationIua.cs" />
+    <Compile Include="Services\FreeProxy.cs" />
     <Compile Include="Services\RuCaptcha.cs" />
     <Compile Include="Services\SmsRegApi.cs" />
   </ItemGroup>

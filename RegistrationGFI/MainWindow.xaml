@@ -24,7 +24,7 @@
             
         </Menu>
         <TabControl Margin="0,20,0,0">
-            <TabItem Header="Почты i.ua">
+            <TabItem Header="i.ua">
                 <Grid>
                     <DataGrid DataContext="{Binding Path=EmailsIua, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding}" CanUserAddRows="False" AutoGenerateColumns="False">
                         <DataGrid.Columns>
@@ -46,7 +46,7 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Почты reg i.ua">
+            <TabItem Header="reg i.ua">
                 <Grid>
                     <DataGrid Name="DataGridIuaRegistered" DataContext="{Binding Path=EmailsIuaReg, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding}" CanUserAddRows="False" AutoGenerateColumns="False">
                         <DataGrid.Columns>
@@ -57,7 +57,7 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Почты google">
+            <TabItem Header="google">
                 <Grid>
                     <DataGrid DataContext="{Binding Path=EmailsGoogle, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding}" CanUserAddRows="False" AutoGenerateColumns="False">
                         <DataGrid.Columns>
@@ -69,7 +69,7 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Почты reg google">
+            <TabItem Header="reg google">
                 <Grid>
                     <DataGrid DataContext="{Binding Path=EmailsGoogleReg, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding}" CanUserAddRows="False" AutoGenerateColumns="False">
                         <DataGrid.Columns>
@@ -81,7 +81,7 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Аккаунты Facebook">
+            <TabItem Header="facebook">
                 <Grid>
                     <DataGrid DataContext="{Binding Path=AccsFacebook, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding}" CanUserAddRows="False" AutoGenerateColumns="False">
                         <DataGrid.Columns>
@@ -92,13 +92,24 @@
                     </DataGrid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Аккаунты reg Facebook">
+            <TabItem Header="reg facebook">
                 <Grid>
                     <DataGrid DataContext="{Binding Path=AccsFacebookReg, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding}" CanUserAddRows="False" AutoGenerateColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             <DataGridTextColumn Header="Email" Binding="{Binding Email, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             <DataGridTextColumn Header="Phone" Binding="{Binding Phone, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="proxy">
+                <Grid>
+                    <DataGrid DataContext="{Binding Path=FreeProxys, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" ItemsSource="{Binding}" CanUserAddRows="False" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Id" Binding="{Binding Id, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            <DataGridTextColumn Header="Ip" Binding="{Binding Ip, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+                            <DataGridTextColumn Header="Port" Binding="{Binding Port, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

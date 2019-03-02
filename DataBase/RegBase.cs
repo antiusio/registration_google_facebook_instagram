@@ -14,6 +14,8 @@ namespace DataBase
 
         public virtual DbSet<city> citys { get; set; }
         public virtual DbSet<country> countrys { get; set; }
+        public virtual DbSet<facebook_accs> facebook_accs { get; set; }
+        public virtual DbSet<free_http_proxys> free_http_proxys { get; set; }
         public virtual DbSet<google_accs> google_accs { get; set; }
         public virtual DbSet<i_ua_accs> i_ua_accs { get; set; }
         public virtual DbSet<i_ua_domen_names> i_ua_domen_names { get; set; }
@@ -43,6 +45,12 @@ namespace DataBase
                 .HasMany(e => e.i_ua_accs)
                 .WithOptional(e => e.secret_questions)
                 .HasForeignKey(e => e.secret_question_id);
+
+            modelBuilder.Entity<sex>()
+                .HasMany(e => e.facebook_accs)
+                .WithRequired(e => e.sex)
+                .HasForeignKey(e => e.sex_id)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<sex>()
                 .HasMany(e => e.google_accs)

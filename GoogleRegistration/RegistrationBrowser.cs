@@ -108,8 +108,8 @@ namespace ServiceRegistration
                 //fireFoxOptions.SetPreference("network.proxy.http", "7951");
                 //fireFoxOptions.SetPreference("network.proxy.socks_port", 40348);
 
-                //fireFoxOptions.SetPreference("media.peerconnection.enabled", false);
-                fireFoxOptions.SetPreference("media.peerconnection.use_document_iceservers", false);
+                fireFoxOptions.SetPreference("media.peerconnection.enabled", false);
+                //fireFoxOptions.SetPreference("media.peerconnection.use_document_iceservers", false);
                 //network.http.sendRefererHeader
                 //fireFoxOptions.SetPreference("network.http.sendRefererHeader", 0);
                 //network.proxy.socks_remote_dns

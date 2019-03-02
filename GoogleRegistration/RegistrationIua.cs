@@ -15,7 +15,11 @@ namespace ServiceRegistration
 {
     public class RegistrationIua:RegistrationBrowser
     {
-        
+        public RegistrationIua(string ip = null, int port = 0, string userAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/54.0", TypeBrowserEnum typeBrowser = TypeBrowserEnum.FireFox) 
+            : base(ip,port,userAgent,typeBrowser)
+        {
+
+        }
         public Task<List<AccIua>> RegistrationContainer(List<AccIua> listAccs)
         {
             return Task<List<AccIua>>.Run(() =>
@@ -219,6 +223,7 @@ namespace ServiceRegistration
             if (!Check2pageIua())
             {
                 string errorStr = GetErrorStr1();
+                //Регистрация временно не доступна. Попробуйте позже.
                 goto Start;
             }
             //firstName
@@ -245,6 +250,10 @@ namespace ServiceRegistration
             setAnswer(acc.Answer);
             //submit
             clickSubmitButton2();
+            if (!Check3PageIua())
+            {
+
+            }
             using (RegBase regBase = new RegBase())
             {
                 var citysId = regBase.citys.Where(x => x.value.Equals(acc.City)).First().id;
@@ -298,7 +307,7 @@ namespace ServiceRegistration
         {
             try
             {
-
+                driver.FindElement(ErrorRegMsg);
             }
             catch
             {
@@ -313,8 +322,7 @@ namespace ServiceRegistration
                 var element = driver.FindElement(ErrorRegMsg);
                 return element.Text;
             }
-            catch { }
-            return null;
+            catch { return null; }
         }
     }
 }

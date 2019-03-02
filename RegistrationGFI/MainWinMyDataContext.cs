@@ -1,5 +1,6 @@
 ﻿using Accounts;
 using DataBase;
+using ServiceRegistration.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,6 +15,7 @@ namespace RegistrationGFI
     {
         public MainWinMyDataContext()
         {
+            FreeProxys = new List<FreeProxy>();
             EmailsIua = new List<AccIua>();
             EmailsGoogleReg = new List<AccGoogle>();
             AccsFacebook = new List<AccFacebook>();
@@ -92,6 +94,12 @@ namespace RegistrationGFI
         {
             get { return accsFacebookReg; }
             set { accsFacebookReg = value; OnPropertyChanged("AccsFacebookReg"); }
+        }
+        private List<FreeProxy> freeProxys;
+        public List<FreeProxy> FreeProxys
+        {
+            get { return freeProxys; }
+            set { freeProxys = value; OnPropertyChanged("FreeProxys"); }
         }
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string prop = "")

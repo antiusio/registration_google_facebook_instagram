@@ -12,6 +12,7 @@ namespace DataBase
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public sex()
         {
+            facebook_accs = new HashSet<facebook_accs>();
             google_accs = new HashSet<google_accs>();
             i_ua_accs = new HashSet<i_ua_accs>();
         }
@@ -20,6 +21,9 @@ namespace DataBase
 
         [StringLength(20)]
         public string value { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<facebook_accs> facebook_accs { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<google_accs> google_accs { get; set; }
