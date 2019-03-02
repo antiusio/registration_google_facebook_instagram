@@ -33,7 +33,8 @@ namespace RegistrationGFI
                     EmailsIuaReg.Add(new AccIua(acc));
                 foreach (var acc in regBase.google_accs)
                     EmailsGoogleReg.Add(new AccGoogle(acc));
-                    
+                foreach (var p in regBase.free_http_proxys)
+                    FreeProxys.Add(new FreeProxy(p));
                 foreach(var acc in EmailsIuaReg)
                 {
                     int CountOverlap = 0;

@@ -17,6 +17,7 @@
                 <MenuItem Header="Регистрация facebook" Click="RegisterFacebookMenuItem_Click"/>
                 
                 <MenuItem Header="Загрузить юзер агенты" Click="UploadUserAgentsMenuItem_Click"/>
+                <MenuItem Header="Загрузить прокся" Click="UploadProxysMenuItem_Click"/>
                 
                 <MenuItem Header="Настройки" Click="SettingsMenuItem_Click"/>
                 

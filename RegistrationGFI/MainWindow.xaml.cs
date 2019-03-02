@@ -23,6 +23,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using RegistrationGFI.Windows;
 using System.Net.Http;
+using ServiceRegistration.Services;
 
 namespace RegistrationGFI
 {
@@ -39,8 +40,22 @@ namespace RegistrationGFI
 
         private void RegisterBufferMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            RegistrationIua r = new RegistrationIua();
-            r.RegistrationContainer(myDataContext.EmailsIua);
+            int indexProxy = 0;
+            for(int i = 0; i < myDataContext.EmailsIua.Count; i++)
+            {
+                if (indexProxy > myDataContext.FreeProxys.Count)
+                    indexProxy = 0;
+                FreeProxy p = myDataContext.FreeProxys[indexProxy];
+                RegistrationIua r = new RegistrationIua(p.Ip,p.Port);
+                bool registered= r.OpenRegistration(myDataContext.EmailsIua[i]);
+                if(!registered)
+                {
+                    i--;
+                    indexProxy++;
+                }
+            }
+            //RegistrationIua r = new RegistrationIua();
+            //r.RegistrationContainer(myDataContext.EmailsIua);
         }
         
 
@@ -76,6 +91,24 @@ namespace RegistrationGFI
         {
             RegistrationFacebook r = new RegistrationFacebook();
             r.RegistrationContainer(myDataContext.AccsFacebook);
+        }
+
+        private void UploadProxysMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            
+            AddProxys window = new AddProxys();
+            window.Owner = this;
+            window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            bool? dialog = window.ShowDialog();
+            if (dialog == true)
+            {
+                myDataContext.FreeProxys.Clear();
+                using (RegBase regBase = new RegBase())
+                {
+                    foreach (var p in regBase.free_http_proxys)
+                        myDataContext.FreeProxys.Add(new FreeProxy(p));
+                }
+            }
         }
     }
 }

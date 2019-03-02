@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataBase;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,6 +11,12 @@ namespace ServiceRegistration.Services
 {
     public class FreeProxy:INotifyPropertyChanged
     {
+        public FreeProxy(free_http_proxys proxy)
+        {
+            Id = proxy.id;
+            ip = proxy.ip;
+            port = (int)proxy.port;
+        }
         private int id;
         public int Id
         {
