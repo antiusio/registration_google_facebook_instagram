@@ -24,6 +24,7 @@ using System.Threading;
 using RegistrationGFI.Windows;
 using System.Net.Http;
 using ServiceRegistration.Services;
+using RestSharp;
 
 namespace RegistrationGFI
 {
@@ -31,29 +32,47 @@ namespace RegistrationGFI
     public partial class MainWindow : Window
     {
         MainWinMyDataContext myDataContext =null;
+        private class Ip
+        {
+            public string time_zone;
+        }
         public MainWindow()
         {
-            
+
+            ServiceRegistration.PostGetApi.RegistrationIua r = new ServiceRegistration.PostGetApi.RegistrationIua();
+            r.OpenRegister();
+
             InitializeComponent();
             
         }
 
         private void RegisterBufferMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            int indexProxy = 0;
-            for(int i = 0; i < myDataContext.EmailsIua.Count; i++)
-            {
-                if (indexProxy > myDataContext.FreeProxys.Count)
-                    indexProxy = 0;
-                FreeProxy p = myDataContext.FreeProxys[indexProxy];
-                RegistrationIua r = new RegistrationIua(p.Ip,p.Port);
-                bool registered= r.OpenRegistration(myDataContext.EmailsIua[i]);
-                if(!registered)
+            Task.Run(()=> 
+            { 
+                int indexProxy = 0;
+                for(int i = 0; i < myDataContext.EmailsIua.Count; i++)
                 {
-                    i--;
-                    indexProxy++;
+                    if (indexProxy > myDataContext.FreeProxys.Count)
+                        indexProxy = 0;
+                    FreeProxy p = myDataContext.FreeProxys[indexProxy];
+                    RegistrationIua r = new RegistrationIua(p.Ip,p.Port);
+                    bool registered = false;
+                    try
+                    {
+                        registered = r.OpenRegistration(myDataContext.EmailsIua[i]);
+                    }
+                    catch
+                    {
+                        r.CloseDriver();
+                    }
+                    if(!registered)
+                    {
+                        i--;
+                        indexProxy++;
+                    }
                 }
-            }
+                });
             //RegistrationIua r = new RegistrationIua();
             //r.RegistrationContainer(myDataContext.EmailsIua);
         }

@@ -324,5 +324,17 @@ namespace ServiceRegistration
             }
             catch { return null; }
         }
+        public void CloseDriver()
+        {
+            try
+            {
+                driver.Close();
+                driver.Dispose();
+            }
+            catch
+            {
+
+            }
+        }
     }
 }

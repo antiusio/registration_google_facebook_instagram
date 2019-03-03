@@ -109,13 +109,15 @@ namespace ServiceRegistration
                 //fireFoxOptions.SetPreference("network.proxy.socks_port", 40348);
 
                 fireFoxOptions.SetPreference("media.peerconnection.enabled", false);
+
+                fireFoxOptions.SetPreference("permissions.default.image", 2);
                 //fireFoxOptions.SetPreference("media.peerconnection.use_document_iceservers", false);
                 //network.http.sendRefererHeader
                 //fireFoxOptions.SetPreference("network.http.sendRefererHeader", 0);
                 //network.proxy.socks_remote_dns
 
                 //;
-                fireFoxOptions.SetPreference("network.proxy.socks_remote_dns", true);
+                //fireFoxOptions.SetPreference("network.proxy.socks_remote_dns", true);
                 //;
 
                 //fireFoxOptions.SetLoggingPreference
@@ -147,7 +149,10 @@ namespace ServiceRegistration
                 driver = new ChromeDriver(chromeOptions);
             }
         }
-        
+        public void ChangeProxy()
+        {
+            //((FirefoxDriver)driver)
+        }
 
         
     }
