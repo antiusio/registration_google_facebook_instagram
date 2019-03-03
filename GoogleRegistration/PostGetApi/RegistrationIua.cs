@@ -15,12 +15,15 @@ namespace ServiceRegistration.PostGetApi
 {
     public class RegistrationIua
     {
-        private string mainUrl = "https://www.i.ua/";
+        string ip;
+        int port;
         private static string RegisterLink = null;
         private HttpClient httpClient;
         private CookieContainer cookieContainer;
         public RegistrationIua(string ip=null, int port = 0, string baseAdress = "https://www.i.ua/")
         {
+            this.ip = ip;
+            this.port = port;
             HttpClientHandler handler;
             cookieContainer = new CookieContainer();
             //HtmlDocument myaccountDocument = new HtmlDocument();
@@ -28,7 +31,7 @@ namespace ServiceRegistration.PostGetApi
                 handler = new HttpClientHandler
                 {
                     CookieContainer = cookieContainer,
-                    Proxy = new WebProxy("127.0.0.1", 8888),
+                    Proxy = new WebProxy(ip, port),
                     PreAuthenticate = true,
                     UseDefaultCredentials = false,
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
@@ -247,8 +250,16 @@ namespace ServiceRegistration.PostGetApi
                 get { return getValue(submXpath); }
             }
             #endregion
-            
-            public string GoToNext(string yourLogin, string yourPassword)
+
+            private bool countEntryMoreOnce(string substr, string str)
+            {
+                int index1 = str.IndexOf(substr);
+                int index2 = str.LastIndexOf(substr);
+                if (index1 != index2)
+                    return true;
+                return false;
+            }
+            public string GoToNext(string yourLogin, string yourPassword,string ip=null, int port=0)
             {
                 string domen = "i.ua";
                 Settings s = new Settings();
@@ -256,7 +267,7 @@ namespace ServiceRegistration.PostGetApi
                 //httpClient.BaseAddress = new Uri(RegisterLink.Remove(RegisterLink.IndexOf("registration/")));
                 try
                 {
-                    //recaptcha = RuCaptcha.SolveRecaptcha(s.RuCaptchaApiKey, GRecaptchaKey, RegisterLink);
+                    recaptcha = RuCaptcha.SolveRecaptcha(s.RuCaptchaApiKey, GRecaptchaKey, RegisterLink);
                 }
                 catch { }
                 ;
@@ -269,28 +280,28 @@ namespace ServiceRegistration.PostGetApi
                     new KeyValuePair<string, string>("socialKey",socialKey),
                     new KeyValuePair<string, string>("soc_email",soc_email),
                     new KeyValuePair<string, string>("_url",_url),
-                    new KeyValuePair<string, string>("crg",crg),
+                    new KeyValuePair<string, string>("crg","33"),
                     new KeyValuePair<string, string>("ppc",ppc),
                     new KeyValuePair<string, string>("ct",ct),
                     new KeyValuePair<string, string>("login_alternate","1"),
-                    new KeyValuePair<string, string>(getName(elementFormNoName1),elementFormNoName1.Attributes["style"].Value.Equals("display:none")? getValue(elementFormNoName1):yourLogin),
-                    new KeyValuePair<string, string>(getName(elementFormNoName2),elementFormNoName2.Attributes["style"].Value.Equals("display:none")? getValue(elementFormNoName2):yourLogin),
-                    new KeyValuePair<string, string>(getName(elementFormNoName3),elementFormNoName3.Attributes["style"].Value.Equals("display:none")? getValue(elementFormNoName3):yourLogin),
+                    new KeyValuePair<string, string>(getName(elementFormNoName1), !countEntryMoreOnce(getName(elementFormNoName1),doc.DocumentNode.OuterHtml)? getValue(elementFormNoName1):yourLogin),
+                    new KeyValuePair<string, string>(getName(elementFormNoName2),!countEntryMoreOnce(getName(elementFormNoName2),doc.DocumentNode.OuterHtml)? getValue(elementFormNoName2):yourLogin),
+                    new KeyValuePair<string, string>(getName(elementFormNoName3),!countEntryMoreOnce(getName(elementFormNoName3),doc.DocumentNode.OuterHtml)? getValue(elementFormNoName3):yourLogin),
                     new KeyValuePair<string, string>("domn",domen),
                     new KeyValuePair<string, string>("email",email),
                     new KeyValuePair<string, string>("g-recaptcha-response",recaptcha),
                     new KeyValuePair<string, string>("login",""),
 
-                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[0]),getValue(getElements(passwordXpath)[0])),
-                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[1]),getValue(getElements(passwordXpath)[1])),
-                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[2]),yourPassword),
-                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[3]),getValue(getElements(passwordXpath)[3])),
-                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[4]),getValue(getElements(passwordXpath)[4])),
-                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[5]),yourPassword),
+                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[0]),!countEntryMoreOnce(getName(getElements(passwordXpath)[0]),doc.DocumentNode.OuterHtml)? getValue(getElements(passwordXpath)[0]):yourPassword),
+                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[1]),!countEntryMoreOnce(getName(getElements(passwordXpath)[1]),doc.DocumentNode.OuterHtml)? getValue(getElements(passwordXpath)[1]):yourPassword),
+                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[2]),!countEntryMoreOnce(getName(getElements(passwordXpath)[2]),doc.DocumentNode.OuterHtml)? getValue(getElements(passwordXpath)[2]):yourPassword),
+                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[3]),!countEntryMoreOnce(getName(getElements(passwordXpath)[3]),doc.DocumentNode.OuterHtml)? getValue(getElements(passwordXpath)[3]):yourPassword),
+                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[4]),!countEntryMoreOnce(getName(getElements(passwordXpath)[4]),doc.DocumentNode.OuterHtml)? getValue(getElements(passwordXpath)[4]):yourPassword),
+                    new KeyValuePair<string, string>(getName(getElements(passwordXpath)[5]),!countEntryMoreOnce(getName(getElements(passwordXpath)[5]),doc.DocumentNode.OuterHtml)? getValue(getElements(passwordXpath)[5]):yourPassword),
                     new KeyValuePair<string, string>("subm",subm),
                 });
                 
-                string nextText = PostApi.Post(url, postData);
+                string nextText = PostApi.Post(url, postData,ip,port);
                 return nextText;
             }
 
@@ -306,7 +317,7 @@ namespace ServiceRegistration.PostGetApi
                     RegisterLink = mainPage.RegisterPageUrl;
                 }
                 Register1Page register1Page = new Register1Page(httpClient, RegisterLink);
-                string s = register1Page.GoToNext("dfdsfsfgghfg256","Anton11249Aa1");
+                string s = register1Page.GoToNext("anti.pikof526","AnsdGn11sdf",ip,port);
                 ;
                 return false;
             });

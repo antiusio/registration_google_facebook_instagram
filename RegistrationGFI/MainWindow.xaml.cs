@@ -38,10 +38,10 @@ namespace RegistrationGFI
         }
         public MainWindow()
         {
-
+            //"104.129.8.6", 3128
             ServiceRegistration.PostGetApi.RegistrationIua r = new ServiceRegistration.PostGetApi.RegistrationIua();
-            r.OpenRegister();
-
+            r.OpenRegister().GetAwaiter().GetResult();
+            ;
             InitializeComponent();
             
         }

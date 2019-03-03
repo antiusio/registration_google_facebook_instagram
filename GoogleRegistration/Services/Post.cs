@@ -22,7 +22,7 @@ namespace ServiceRegistration.Services
                 handler = new HttpClientHandler
                 {
                     CookieContainer = cookieContainer,
-                    Proxy = new WebProxy("127.0.0.1", 8888),
+                    Proxy = new WebProxy(ip, port),
                     PreAuthenticate = true,
                     UseDefaultCredentials = false,
                     AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
@@ -42,9 +42,9 @@ namespace ServiceRegistration.Services
             httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
             httpClient.DefaultRequestHeaders.Add("Accept-Language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,uk;q=0.6");
         }
-        public static string Post(string url, FormUrlEncodedContent postData)
+        public static string Post(string url, FormUrlEncodedContent postData, string ip=null, int port=0)
         {
-            createBrowser();
+            createBrowser(ip,port);
             httpClient.BaseAddress = new Uri(url.Remove(url.IndexOf("registration/")));
             string content = null;
             try
