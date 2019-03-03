@@ -74,5 +74,48 @@ namespace ServiceRegistration.Services
             //webElement.
             //webElement.SendKeys(result);
         }
+        public static string SolveRecaptcha(string apiKey, string gKey,string url)
+        {
+            HttpClient httpClient = new HttpClient();
+            B:
+            string respond = "";
+            try
+            {
+                respond = httpClient.GetStringAsync("http://rucaptcha.com/in.php?key=" + apiKey + "&method=userrecaptcha&googlekey=" + gKey + "&pageurl=" + url).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Thread.Sleep(6000);
+                goto B;
+            }
+            string idCaptcha = "";
+            if (respond.IndexOf("OK") != -1)
+            {
+                idCaptcha = respond.Remove(0, respond.IndexOf('|') + 1);
+            }
+
+            for (; ; )
+            {
+                Thread.Sleep(6000);
+                respond = httpClient.GetStringAsync("http://rucaptcha.com/res.php?key=" + apiKey + "&action=get&id=" + idCaptcha).GetAwaiter().GetResult();
+
+                if (respond.IndexOf("ERROR_WRONG_CAPTCHA_ID") != -1)
+                {
+                    throw new Exception("ERROR_WRONG_CAPTCHA_ID");
+                }
+                if (respond.Equals("ERROR_CAPTCHA_UNSOLVABLE"))
+                {
+                    throw new Exception("ERROR_CAPTCHA_UNSOLVABLE");
+                }
+                if (respond.IndexOf("CAPCHA_NOT_READY") == -1)
+                {
+                    break;
+                }
+
+            }
+
+            string result = respond.Split(new char[] { '|' })[1];
+            return result;
+        }
     }
 }
