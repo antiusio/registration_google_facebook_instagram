@@ -1,4 +1,6 @@
-﻿using DataBase.DataStructures;
+﻿using Accounts;
+using Accounts.Data;
+using DataBase.DataStructures;
 using HtmlAgilityPack;
 using ServiceRegistration.Services;
 using System;
@@ -51,9 +53,14 @@ namespace ServiceRegistration.PostGetApi
             httpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
             httpClient.DefaultRequestHeaders.Add("Accept-Language", "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7,uk;q=0.6");
 
-            httpClient.BaseAddress = new Uri(baseAdress);
+            //httpClient.BaseAddress = new Uri(baseAdress);
         }
-        
+        public string GetWhoer()
+        {
+            var byteArray =  httpClient.GetByteArrayAsync("https://f.vision").GetAwaiter().GetResult();
+            var responseString = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
+            return responseString;
+        }
         
         public class MainPage
         {
@@ -84,7 +91,39 @@ namespace ServiceRegistration.PostGetApi
                 get { return GetRegisterPageUrl(); }
             }
         }
-        public class Register1Page
+        public abstract class RegisterPage
+        {
+            protected HttpClient httpClient;
+            protected string url;
+            protected HtmlAgilityPack.HtmlDocument doc;
+
+            protected HtmlNode getElement(string xpath)
+            {
+                return doc.DocumentNode.SelectSingleNode(xpath);
+            }
+            protected string getValue(string xpath)
+            {
+                return getElement(xpath).GetAttributeValue("value", null);
+            }
+
+            protected string getName(string xpath)
+            {
+                return getElement(xpath).GetAttributeValue("name", null);
+            }
+            protected string getName(HtmlNode node)
+            {
+                return node.GetAttributeValue("name", null);
+            }
+            protected string getValue(HtmlNode node)
+            {
+                return node.GetAttributeValue("value", null);
+            }
+            protected HtmlNodeCollection getElements(string xpath)
+            {
+                return doc.DocumentNode.SelectNodes(xpath);
+            }
+        }
+        public class Register1Page: RegisterPage
         {
             #region Xpath
             private string GRecaptchaXpath = "//div[@class='g-recaptcha' and @data-sitekey]";
@@ -105,11 +144,8 @@ namespace ServiceRegistration.PostGetApi
             private string passwordXpath = "//input[@type='password']";
             
 
-            private string getCountFuncrion = "function getCount(){return document.getElementsByName('rform')[0].elements.length}";
+            private string getCountFunction = "function getCount(){return document.getElementsByName('rform')[0].elements.length}";
             #endregion
-            private HttpClient httpClient;
-            private string url;
-            private HtmlAgilityPack.HtmlDocument doc;
             public Register1Page(HttpClient httpClient, string url)
             {
                 this.httpClient = httpClient;
@@ -135,14 +171,7 @@ namespace ServiceRegistration.PostGetApi
                 }
             }
             
-            private HtmlNode getElement(string xpath)
-            {
-                return doc.DocumentNode.SelectSingleNode(xpath);
-            }
-            private string getValue(string xpath)
-            {
-                return getElement(xpath).GetAttributeValue("value", null);
-            }
+            
             private string _subm
             {
                 get { return getValue(_submXpath); }
@@ -183,7 +212,10 @@ namespace ServiceRegistration.PostGetApi
                 {
                     w = new WebBrowser();
                     w.Navigate("about:blank");
-                    w.Document.Write("<html><script>"+getCountFuncrion+"</script><body>" + getElement(FormXpath).OuterHtml + "</body></html>");
+                    var node = doc.CreateElement("script");
+                    doc.DocumentNode.SelectSingleNode("//head").ChildNodes.Add(node);
+                    //w.Document.Write("<html><script>"+getCountFunction+"</script><body>" + getElement(FormXpath).OuterHtml + "</body></html>");
+                    w.Document.Write(doc.DocumentNode.OuterHtml);
                     w.Refresh();
                     var rez = w.Document.InvokeScript("getCount");
                     if (!(rez is null))
@@ -204,18 +236,6 @@ namespace ServiceRegistration.PostGetApi
             private string crg
             {
                 get { return getFormCountElements().ToString(); }
-            }
-            private string getName(string xpath)
-            {
-                return getElement(xpath).GetAttributeValue("name", null);
-            }
-            private string getName(HtmlNode node)
-            {
-                return node.GetAttributeValue("name",null);
-            }
-            private string getValue(HtmlNode node)
-            {
-                return node.GetAttributeValue("value", null);
             }
             private HtmlNode elementFormNoName1
             {
@@ -241,10 +261,6 @@ namespace ServiceRegistration.PostGetApi
             {
                 get { return getValue(loginXpath); }
             }
-            private HtmlNodeCollection getElements(string xpath)
-            {
-                return doc.DocumentNode.SelectNodes(xpath);
-            }
             private string subm
             {
                 get { return getValue(submXpath); }
@@ -267,7 +283,7 @@ namespace ServiceRegistration.PostGetApi
                 //httpClient.BaseAddress = new Uri(RegisterLink.Remove(RegisterLink.IndexOf("registration/")));
                 try
                 {
-                    recaptcha = RuCaptcha.SolveRecaptcha(s.RuCaptchaApiKey, GRecaptchaKey, RegisterLink);
+                    //recaptcha = RuCaptcha.SolveRecaptcha(s.RuCaptchaApiKey, GRecaptchaKey, RegisterLink);
                 }
                 catch { }
                 ;
@@ -280,7 +296,7 @@ namespace ServiceRegistration.PostGetApi
                     new KeyValuePair<string, string>("socialKey",socialKey),
                     new KeyValuePair<string, string>("soc_email",soc_email),
                     new KeyValuePair<string, string>("_url",_url),
-                    new KeyValuePair<string, string>("crg","33"),
+                    new KeyValuePair<string, string>("crg",crg),
                     new KeyValuePair<string, string>("ppc",ppc),
                     new KeyValuePair<string, string>("ct",ct),
                     new KeyValuePair<string, string>("login_alternate","1"),
@@ -304,8 +320,112 @@ namespace ServiceRegistration.PostGetApi
                 string nextText = PostApi.Post(url, postData,ip,port);
                 return nextText;
             }
+        }
+        public class RegisterPage2: RegisterPage
+        {
+            public RegisterPage2(HttpClient httpClient, string outherHtml)
+            {
+                httpClient = new HttpClient();
+                doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(outherHtml);
+            }
+            #region Xpath
+            private static string getXpathForName(string name) { return "//input[@name='" + name + "']"; }
+            private string _submXpath = getXpathForName("_subm");
+            private string _urlXpath = getXpathForName("_url");
+            private string noNameElementXpath = "//form[@name]//input[@name and @value]";
+            private string ppcXpath = getXpathForName("ppc");
+            private string submXpath = getXpathForName("subm");
+            private string urlXpath = getXpathForName("url");
+            private string sectionXpath = getXpathForName("section");
+            private string inviteXpath = getXpathForName("invite");
+            private string soc_emailXpath = getXpathForName("soc_email");
+            private string countryOptionsXpath = getXpathForName("country")+"//option[@value]";
+            private string cityXpath = getXpathForName("city");
+            private string Xpath = getXpathForName("");
+            #endregion
+            #region GetElements
+            private string _subm
+            {
+                get { return getValue(_submXpath); }
+            }
+            private string _url
+            {
+                get { return getValue(_urlXpath); }
+            }
+            private string ppc
+            {
+                get { return getValue(ppcXpath); }
+            }
+            private string subm
+            {
+                get { return getValue(submXpath); }
+            }
+            private string url
+            {
+                get { return getValue(urlXpath); }
+            }
+            private string section
+            {
+                get { return getValue(sectionXpath); }
+            }
+            private string invite
+            {
+                get { return getValue(inviteXpath); }
+            }
+            private string soc_email
+            {
+                get { return getValue(soc_emailXpath); }
+            }
+            private string getCountryId(string country)
+            {
+                var countryOptions = getElements(countryOptionsXpath);
+                var countryElements = countryOptions.Where(x => x.InnerText.Equals(country));
+                if (countryElements.Count() == 0)
+                    return null;
+                return countryElements.First().Attributes["value"].Value;
+            }
+            #endregion
+            public string GoNext(AccIua accIua)
+            {
+                string fname = accIua.FirstName;//имя
+                string lname = accIua.LastName;//фамилия
+                string s = ((int)accIua.Sex).ToString();
+                string day = accIua.DateBirth.Day.ToString();
+                string month = accIua.DateBirth.Month.ToString();
+                string year = accIua.DateBirth.Year.ToString();
+                string country = accIua.Country;
+                var postData = new FormUrlEncodedContent(new[]
+                {
+                    new KeyValuePair<string, string>("_subm",_subm),
+                    new KeyValuePair<string, string>("_url",_url),
+                    new KeyValuePair<string, string>(getName(getElements(noNameElementXpath)[2]),getValue(getElements(noNameElementXpath)[2])),
+                    new KeyValuePair<string, string>(getName(getElements(noNameElementXpath)[3]),getValue(getElements(noNameElementXpath)[3])),
+                    new KeyValuePair<string, string>("ppc",ppc),
+                    new KeyValuePair<string, string>("subm",subm),
+                    new KeyValuePair<string, string>("url",url),
+                    new KeyValuePair<string, string>("section",section),
+                    new KeyValuePair<string, string>("invite",invite),
+                    new KeyValuePair<string, string>("soc_email",soc_email),
+                    new KeyValuePair<string, string>("fname",fname),
+                    new KeyValuePair<string, string>("lname",lname),
+                    new KeyValuePair<string, string>("s",s),
+                    new KeyValuePair<string, string>("day",day),
+                    new KeyValuePair<string, string>("month",month),
+                    new KeyValuePair<string, string>("year",year),
+                    new KeyValuePair<string, string>("country",getCountryId(country)),
+                    new KeyValuePair<string, string>("",),
+                    new KeyValuePair<string, string>("",),
+                    new KeyValuePair<string, string>("",),
+                    new KeyValuePair<string, string>("",),
+                    new KeyValuePair<string, string>("",),
+                    new KeyValuePair<string, string>("",),
+                    new KeyValuePair<string, string>("",),
+                });
 
-
+                return "";
+            }
+            private 
         }
         public Task<bool> OpenRegister()
         {
@@ -317,7 +437,7 @@ namespace ServiceRegistration.PostGetApi
                     RegisterLink = mainPage.RegisterPageUrl;
                 }
                 Register1Page register1Page = new Register1Page(httpClient, RegisterLink);
-                string s = register1Page.GoToNext("anti.pikof526","AnsdGn11sdf",ip,port);
+                string s = register1Page.GoToNext("anti.pkkof526","AnsdGn11sdf",ip,port);
                 ;
                 return false;
             });

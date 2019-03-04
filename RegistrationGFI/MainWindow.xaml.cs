@@ -39,8 +39,13 @@ namespace RegistrationGFI
         public MainWindow()
         {
             //"104.129.8.6", 3128
-            ServiceRegistration.PostGetApi.RegistrationIua r = new ServiceRegistration.PostGetApi.RegistrationIua();
-            r.OpenRegister().GetAwaiter().GetResult();
+            ServiceRegistration.PostGetApi.RegistrationIua r = new ServiceRegistration.PostGetApi.RegistrationIua("104.129.8.6", 3128);
+            ServiceRegistration.PostGetApi.RegistrationIua r2 = new ServiceRegistration.PostGetApi.RegistrationIua("47.251.50.29", 3128);
+            ServiceRegistration.PostGetApi.RegistrationIua r3 = new ServiceRegistration.PostGetApi.RegistrationIua();
+            //r.OpenRegister().GetAwaiter().GetResult();
+            string s = r.GetWhoer();
+            string s2 = r2.GetWhoer();
+            string s3 = r3.GetWhoer();
             ;
             InitializeComponent();
             
