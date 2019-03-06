@@ -38,8 +38,14 @@ namespace RegistrationGFI
         }
         public MainWindow()
         {
+            var eq =   "03AOLTBLTog1gh5CROClJhryEeI4wri1HYSucy3U_X2enme1EULcTqd8njjuCyXftq_H7O90WDEyxjcnjOL_xMEmr4Rs6HzWPTdj8J6XTZ6lDuODH6fnbqNHjbph825UiOUTABkfEEf3BoNzInvwI_2_C31CL_lehnh-nIo7dZraLdFlYKu-zmzM9IDsh7c2dNbTMKMZN61mRiE3ZDKT62o8pxNQV-VuztF5rH2-a_CILeg8jaYxaOi54H2Ko85SpQGlC1DkmdZIC5yw7IFOXmqBUyh3GMgLCUkaHgvPWeUJWxf4TpdzqEzh5RTx7_vv2tfC4yfwGFl1TD".
+                Equals("03AOLTBLQ8TMZopcVxDsJu4tziBrXQrJjUsMbynzXxuUc0wDpyhabvKSmddNJz1UY8Fpt-j7QM30uhwcf1X8FG_Ix1st492sNIuhz8i0lbphuMS43YuTZL9F06qzhTBcrLlSugUdPqSuXjLn4Woo9za-xZo02V1ok6YSfC7HUYpCyUzD74fqUt_Zs5DkWoybT65ML8m0EeQfQcItOwTbmBpe4nqO_fU-VWKeBujvfSmTpypWyn9ScNMdeJdS5PKAGFu9Vwx2OYOgLk6rcUqRye-7kvtLwrJBmjugeSWejxFCzHXRWO8szRNrfd5wSdJQejearbHIEglz4j");
+            ;
             //"104.129.8.6", 3128
-            ServiceRegistration.PostGetApi.RegistrationIua r = new ServiceRegistration.PostGetApi.RegistrationIua("104.129.8.6", 3128);
+            //"118.174.232.115",61796
+            //176.105.199.19:52024
+            //"127.0.0.1", 8888
+            ServiceRegistration.PostGetApi.RegistrationIua r = new ServiceRegistration.PostGetApi.RegistrationIua("127.0.0.1", 8888);
             //ServiceRegistration.PostGetApi.RegistrationIua r2 = new ServiceRegistration.PostGetApi.RegistrationIua("47.251.50.29", 3128);
             //ServiceRegistration.PostGetApi.RegistrationIua r3 = new ServiceRegistration.PostGetApi.RegistrationIua();
             //r.OpenRegister().GetAwaiter().GetResult();

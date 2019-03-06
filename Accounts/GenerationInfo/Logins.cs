@@ -26,14 +26,14 @@ namespace Accounts.GenerationInfo
             }
             else
             {
-                result = firstNameTranslit + "." + lastNameTranslit;
+                result = firstNameTranslit + "_" + lastNameTranslit;
             }
             Random r = new Random((int)DateTime.Now.ToBinary());
             result = result.Replace("" + '\ufeff', "");
             result = result + r.Next();
-            if (result.Length > 20)
+            if (result.Length > 15)
             {
-                result = result.Remove(20);
+                result = result.Remove(15);
             }
 
             //result = result + "i";

@@ -144,7 +144,7 @@ namespace ServiceRegistration.PostGetApi
             private string loginXpath = "//input[@name='login']";
             private string passwordXpath = "//input[@type='password']";
             private string errorTextXpath = "//div[@id='rform_errCtrl']//div[@class='content clear']";
-            
+            private string errorRecaptchaXpath = "//p[@id='g-recaptcha-response_errCtrl']";
 
             private string getCountFunction = "function getCount(){return document.getElementsByName('rform')[0].elements.length}";
             #endregion
@@ -163,12 +163,14 @@ namespace ServiceRegistration.PostGetApi
             private string[] errors = new string[] 
             {
                 "Регистрация временно не доступна. Попробуйте позже.",
-                "При заполнении формы были допущены ошибки!"
+                "Перевірка не пройдена",
+                "Проверка не пройдена",
             };
             private string[] whatYouDo = new string[] 
             {
                 "Change proxy",
-                "GenerateNewData"
+                "New recaptcha",
+                "New recaptcha",
             };
             #region GetElements
             private string getRecaptchaKey()
@@ -281,6 +283,7 @@ namespace ServiceRegistration.PostGetApi
 
             private bool countEntryMoreOnce(string substr, string str)
             {
+                
                 int index1 = str.IndexOf(substr);
                 int index2 = str.LastIndexOf(substr);
                 if (index1 != index2)
@@ -345,6 +348,15 @@ namespace ServiceRegistration.PostGetApi
                 string errorText = getPageErrorString();
                 if (errorText is null)
                     return -1;
+                var listInnerExceptions = getErrorsString();
+                for(int i = 0; i < listInnerExceptions.Count;i++)
+                {
+                    for (int j = 0; j < errors.Length; j++)
+                    {
+                        if (errors[j].Equals(listInnerExceptions[i]))
+                            return j;
+                    }
+                }
                 for (int i = 0; i < errors.Length; i++)
                 {
                     if (errors[i].Equals(errorText))
@@ -360,6 +372,18 @@ namespace ServiceRegistration.PostGetApi
                     return element.InnerText;
                 }
                 catch { return null; }
+            }
+            private List<string> getErrorsString()
+            {
+                List<string> errorsList = new List<string>();
+                try
+                {
+                    var element = doc.DocumentNode.SelectSingleNode(errorRecaptchaXpath);
+                    errorsList.Add(element.InnerText);
+                }
+                catch { }
+
+                return errorsList;
             }
         }
         
@@ -428,6 +452,14 @@ namespace ServiceRegistration.PostGetApi
                     return null;
                 return countryElements.First().Attributes["value"].Value;
             }
+            private string getCountryId()
+            {
+                var countryOptions = getElements(countryOptionsXpath);
+                var countryElements = countryOptions.Where(x =>x.GetAttributeValue("selected",null)!=null);
+                if (countryElements.Count() == 0)
+                    return null;
+                return countryElements.First().Attributes["value"].Value;
+            }
             private string getCityId(string city)
             {
                 var cityOptions = getElements(cityOptionsXpath);
@@ -436,12 +468,20 @@ namespace ServiceRegistration.PostGetApi
                     return null;
                 return cityElements.First().Attributes["value"].Value;
             }
+            private string getCityId()
+            {
+                var cityOptions = getElements(cityOptionsXpath);
+                var cityElements = cityOptions.Where(x => x.GetAttributeValue("selected", null) != null);
+                if (cityElements.Count() == 0)
+                    return null;
+                return cityElements.First().Attributes["value"].Value;
+            }
             private string getQuestId(string quest)
             {
                 var questOptions = getElements(questOptionsXpath);
-                var questElements = questOptions.Where(x => x.InnerText.Equals(quest));
+                var questElements = questOptions.Where(x => x.InnerText.Replace("&nbsp;"," ").Equals(quest));
                 if (questElements.Count() == 0)
-                    return null;
+                    return "4";
                 return questElements.First().Attributes["value"].Value;
             }
             #endregion
@@ -474,7 +514,9 @@ namespace ServiceRegistration.PostGetApi
                     new KeyValuePair<string, string>("day",day),
                     new KeyValuePair<string, string>("month",month),
                     new KeyValuePair<string, string>("year",year),
-                    new KeyValuePair<string, string>("country",getCountryId(country)),
+                    new KeyValuePair<string, string>("country",getCountryId()),
+                    //city
+                    new KeyValuePair<string, string>("city",getCityId()),
                     new KeyValuePair<string, string>("lang","1"),
                     new KeyValuePair<string, string>("agree","1"),
                     new KeyValuePair<string, string>("alt_email",""),
@@ -483,11 +525,13 @@ namespace ServiceRegistration.PostGetApi
                     new KeyValuePair<string, string>("phone",""),
                     new KeyValuePair<string, string>("g-token",gToken),
                 });
-                string rez = PostApi.Post(url, postData, ip, port);
+                string rez = PostApi.Post("https://passport.i.ua/registration/?_url=https%3A%2F%2Fwww.i.ua%2F", postData, ip, port);
                 return rez;
             }
             
         }
+        
+        
         public Task<bool> OpenRegister()
         {
             return Task.Run(()=> 
